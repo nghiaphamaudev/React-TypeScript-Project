@@ -5,6 +5,7 @@ import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
 import CardProduct from 'src/components/client/cards/CardProduct';
 import Progress from 'src/components/client/steps/Progress';
+import { Link } from 'react-router-dom';
 
 const ShoppingCart = () => {
   return (
@@ -291,13 +292,13 @@ const ShoppingCart = () => {
                 <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
                   or
                 </span>
-                <a
-                  href="#"
+                <Link
+                  to="/products"
                   title=""
                   className="inline-flex items-center gap-2 text-sm font-medium text-sky-700 underline hover:no-underline dark:text-sky-500"
                 >
                   Continue Shopping
-                </a>
+                </Link>
                 <EastIcon fontSize="inherit" sx={{ color: blue[900] }} />
               </div>
             </div>

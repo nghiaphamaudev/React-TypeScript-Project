@@ -1,18 +1,15 @@
 import { ReactNode } from 'react';
+import { Outlet } from 'react-router-dom';
 import Footer from 'src/components/client/Footer';
 import Header from 'src/components/client/Header';
 
-interface ClientLayoutProps {
-  children: ReactNode;
-}
-
-const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
+const ClientLayout = () => {
   return (
-    <div>
+    <>
       <Header />
-      <main>{children}</main>
+      <Outlet />
       <Footer />
-    </div>
+    </>
   );
 };
 

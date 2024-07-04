@@ -1,6 +1,6 @@
 import './App.css';
 
-import { useRoutes } from 'react-router-dom';
+import { Navigate, useRoutes } from 'react-router-dom';
 import ClientLayout from './layouts/ClientLayout';
 import HomePage from './pages/client/HomePage';
 import DetailProduct from './pages/client/DetailProduct';
@@ -13,93 +13,41 @@ import SummaryOrder from './components/client/SummaryOrder';
 import Checkout from './components/client/Checkout';
 import Payment from './components/client/Payment';
 import ShoppingLayout from './layouts/ShoppingLayout';
+import AdminLayout from './layouts/AdminLayout';
+import ListProduct from './components/admin/ListProduct';
 
 const routerConfig = [
   {
     path: '/',
-    element: (
-      <ClientLayout>
-        <HomePage />
-      </ClientLayout>
-    ),
-  },
-  {
-    path: 'product/:id',
-    element: (
-      <ClientLayout>
-        <DetailProduct />
-      </ClientLayout>
-    ),
-  },
-  {
-    path: 'products',
-    element: (
-      <ClientLayout>
-        <AllProduct />
-      </ClientLayout>
-    ),
+    element: <ClientLayout />,
+    children: [
+      { path: '/', element: <Navigate to="/home" /> },
+      { path: 'home', element: <HomePage /> },
+      { path: 'register', element: <Register /> },
+      { path: 'login', element: <Login /> },
+      { path: 'products', element: <AllProduct /> },
+      {
+        path: 'shopping-cart',
+        element: <ShoppingLayout />,
+        children: [
+          { path: '', element: <Navigate to="/shopping-cart/cart" /> },
+          { path: 'cart', element: <ShoppingCart /> },
+          { path: 'check-out', element: <Checkout /> },
+          { path: 'order', element: <SummaryOrder /> },
+          { path: 'payment', element: <Payment /> },
+        ],
+      },
+      { path: 'product/:id', element: <DetailProduct /> },
+    ],
   },
   {
     path: '*',
     element: <PageNotFound />,
   },
   {
-    path: '/login',
-    element: (
-      <ClientLayout>
-        <Login />
-      </ClientLayout>
-    ),
-  },
-  {
-    path: '/register',
-    element: (
-      <ClientLayout>
-        <Register />
-      </ClientLayout>
-    ),
-  },
-  {
-    path: 'shopping-cart',
-    element: (
-      <ClientLayout>
-        {' '}
-        <ShoppingLayout>
-          <ShoppingCart />
-        </ShoppingLayout>
-      </ClientLayout>
-    ),
-  },
-  {
-    path: '/check-out',
-    element: (
-      <ClientLayout>
-        {' '}
-        <ShoppingLayout>
-          <Checkout />
-        </ShoppingLayout>
-      </ClientLayout>
-    ),
-  },
-  {
-    path: '/summary-order',
-    element: (
-      <ClientLayout>
-        <ShoppingLayout>
-          <SummaryOrder />
-        </ShoppingLayout>
-      </ClientLayout>
-    ),
-  },
-  {
-    path: '/payment',
-    element: (
-      <ClientLayout>
-        <ShoppingLayout>
-          <Payment />
-        </ShoppingLayout>
-      </ClientLayout>
-    ),
+    path: '/admin',
+    element: <AdminLayout />,
+    children: [{ path: 'product/list-product', element: <ListProduct /> }],
   },
 ];
 

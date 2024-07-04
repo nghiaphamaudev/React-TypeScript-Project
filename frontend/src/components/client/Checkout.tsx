@@ -7,6 +7,10 @@ const Checkout = () => {
         action="#"
         className="mx-auto max-w-screen-xl  2xl:px-0 bg-slate-50 py-6 rounded"
       >
+        {' '}
+        <h2 className="text-xl text-center mb-10 font-semibold text-gray-900 dark:text-white sm:text-2xl">
+          Check Out
+        </h2>
         <div className="mt-6 sm:mt-8 px-6 lg:flex lg:items-start lg:gap-12 xl:gap-12">
           <div className="min-w-0 flex-1 space-y-8 pr-2 ">
             <div className="space-y-4">

@@ -1,10 +1,11 @@
-import Progress from './steps/Progress';
-
 const SummaryOrder = () => {
   return (
     <div>
       <>
-        <form action="#" className="mx-auto max-w-screen-xl px-4 2xl:px-0">
+        <form
+          action="#"
+          className="mx-auto max-w-screen-xl px-6 py-8 bg-slate-50 2xl:px-0"
+        >
           <div className="mx-auto max-w-3xl">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
               Order summary
@@ -26,7 +27,7 @@ const SummaryOrder = () => {
                 type="button"
                 data-modal-target="billingInformationModal"
                 data-modal-toggle="billingInformationModal"
-                className="text-base font-medium text-primary-700 hover:underline dark:text-primary-500"
+                className="text-base font-medium text-blue-700 hover:underline dark:text-blue-500"
               >
                 Edit
               </button>

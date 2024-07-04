@@ -1,3 +1,5 @@
+import Button from './buttons/Button';
+
 const Payment = () => {
   return (
     <div>
@@ -119,12 +121,7 @@ const Payment = () => {
                 />
               </div>
             </div>
-            <button
-              type="submit"
-              className="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-            >
-              Pay now
-            </button>
+            <Button symbol={undefined} title="Pay now" />
           </form>
           <div className="mt-6 grow sm:mt-8 lg:mt-0">
             <div className="space-y-4 rounded-lg border border-gray-100 bg-gray-50 p-6 dark:border-gray-700 dark:bg-gray-800 shadow-lg">
