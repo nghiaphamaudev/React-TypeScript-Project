@@ -15,6 +15,14 @@ import Payment from './components/client/Payment';
 import ShoppingLayout from './layouts/ShoppingLayout';
 import AdminLayout from './layouts/AdminLayout';
 import ListProduct from './components/admin/ListProduct';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
+const theme = createTheme({
+  typography: {
+    fontFamily: 'Poppins, sans-serif',
+  },
+});
 
 const routerConfig = [
   {
@@ -47,13 +55,18 @@ const routerConfig = [
   {
     path: '/admin',
     element: <AdminLayout />,
-    children: [{ path: 'product/list-product', element: <ListProduct /> }],
+    children: [{ path: 'product-list', element: <ListProduct /> }],
   },
 ];
 
 function App() {
   const routes = useRoutes(routerConfig);
-  return <main>{routes}</main>;
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <main>{routes}</main>;
+    </ThemeProvider>
+  );
 }
 
 export default App;

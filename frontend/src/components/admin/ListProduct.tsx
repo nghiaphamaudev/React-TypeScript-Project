@@ -28,7 +28,7 @@ const ListProduct = () => {
     <div>
       <>
         {/* Start block */}
-        <section className="bg-gray-50 dark:bg-gray-900 py-5 px-3 antialiased">
+        <section className="bg-gray-50 dark:bg-gray-900   antialiased">
           <div className="w-full">
             <div className="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
