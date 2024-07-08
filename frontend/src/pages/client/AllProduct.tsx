@@ -4,15 +4,25 @@ import { Products } from 'src/types/products';
 import axios from 'axios';
 import LinearLoading from 'src/components/client/Progress/LinearLoading';
 import { useNavigate } from 'react-router-dom';
-import SnackMessage from 'src/components/client/snackbar/success';
+import { useSnackbar } from 'src/components/client/snackbar/Snackbar';
+import * as React from 'react';
+import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 
 const AllProduct = () => {
   const [products, setProducts] = useState<Products[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string | undefined>(
-    undefined
-  );
-  const [showSnackbar, setShowSnackbar] = useState<boolean>(false);
+  const { showSnackbar } = useSnackbar();
+
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const navigate = useNavigate();
   const getAllProduct = async () => {
@@ -21,11 +31,18 @@ const AllProduct = () => {
       const { data } = await axios.get('http://127.0.0.1:8000/api/v1/laptops');
       setProducts(() => data.data);
     } catch (error: any) {
+      console.log(error);
+      //Khi ko co internet
       if (error.code === 'ERR_NETWORK') {
-        setErrorMessage(
-          () => 'There is currently a network issue. Please try again later.'
+        return showSnackbar(
+          'error',
+          'There is currently a network issue. Please try again later.'
         );
-        setShowSnackbar(() => true);
+        //Api ko ton tai
+      }
+      if (error.code === 'ERR_BAD_REQUEST') {
+        //Api ko ton tai
+        return showSnackbar('error', 'API not found! Please connect again!');
       } else {
         navigate('/404');
       }
@@ -40,9 +57,6 @@ const AllProduct = () => {
   return (
     <div>
       <LinearLoading isShow={loading} />
-      {showSnackbar && (
-        <SnackMessage variant={'error'} message={errorMessage} />
-      )}
       <section className="bg-gray-50 py-8  dark:bg-gray-900 md:py-12">
         <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
           {/* Heading & Filters */}
@@ -98,115 +112,131 @@ const AllProduct = () => {
               </nav>
             </div>
             <div className="flex items-center space-x-4">
-              <button
-                id="sortDropdownButton1"
-                data-dropdown-toggle="dropdownSort1"
-                type="button"
-                className="flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 sm:w-auto"
+              <Button
+                id="basic-button"
+                aria-controls={open ? 'basic-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? 'true' : undefined}
+                onClick={handleClick}
               >
-                <svg
-                  className="-ms-0.5 me-2 h-4 w-4"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width={24}
-                  height={24}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M7 4v16M7 4l3 3M7 4 4 7m9-3h6l-6 6h6m-6.5 10 3.5-7 3.5 7M14 18h4"
-                  />
-                </svg>
-                Sort
-                <svg
-                  className="-me-0.5 ms-2 h-4 w-4"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width={24}
-                  height={24}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="m19 9-7 7-7-7"
-                  />
-                </svg>
-              </button>
+                <div className="flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 sm:w-auto">
+                  <svg
+                    className="-ms-0.5 me-2 h-4 w-4"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={24}
+                    height={24}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M7 4v16M7 4l3 3M7 4 4 7m9-3h6l-6 6h6m-6.5 10 3.5-7 3.5 7M14 18h4"
+                    />
+                  </svg>
+                  Sort
+                  <svg
+                    className="-me-0.5 ms-2 h-4 w-4"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={24}
+                    height={24}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="m19 9-7 7-7-7"
+                    />
+                  </svg>
+                </div>
+              </Button>
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                MenuListProps={{
+                  'aria-labelledby': 'basic-button',
+                }}
+              >
+                <MenuItem>
+                  <ul
+                    className="p-2 text-left text-sm font-medium text-gray-500 dark:text-gray-400"
+                    aria-labelledby="sortDropdownButton"
+                  >
+                    <li>
+                      <a
+                        href="#"
+                        className="group inline-flex w-full items-center rounded-md px-3 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+                      >
+                        {' '}
+                        The most popular{' '}
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        className="group inline-flex w-full items-center rounded-md px-3 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+                      >
+                        {' '}
+                        Newest{' '}
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        className="group inline-flex w-full items-center rounded-md px-3 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+                      >
+                        {' '}
+                        Increasing price{' '}
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        className="group inline-flex w-full items-center rounded-md px-3 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+                      >
+                        {' '}
+                        Decreasing price{' '}
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        className="group inline-flex w-full items-center rounded-md px-3 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+                      >
+                        {' '}
+                        No. reviews{' '}
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="#"
+                        className="group inline-flex w-full items-center rounded-md px-3 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+                      >
+                        {' '}
+                        Discount %{' '}
+                      </a>
+                    </li>
+                  </ul>
+                </MenuItem>
+              </Menu>
+
               <div
                 id="dropdownSort1"
                 className="z-50  w-40 divide-y divide-gray-100 rounded-lg bg-white shadow dark:bg-gray-700 hidden"
                 data-popper-placement="bottom"
-              >
-                <ul
-                  className="p-2 text-left text-sm font-medium text-gray-500 dark:text-gray-400"
-                  aria-labelledby="sortDropdownButton"
-                >
-                  <li>
-                    <a
-                      href="#"
-                      className="group inline-flex w-full items-center rounded-md px-3 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
-                    >
-                      {' '}
-                      The most popular{' '}
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="group inline-flex w-full items-center rounded-md px-3 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
-                    >
-                      {' '}
-                      Newest{' '}
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="group inline-flex w-full items-center rounded-md px-3 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
-                    >
-                      {' '}
-                      Increasing price{' '}
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="group inline-flex w-full items-center rounded-md px-3 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
-                    >
-                      {' '}
-                      Decreasing price{' '}
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="group inline-flex w-full items-center rounded-md px-3 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
-                    >
-                      {' '}
-                      No. reviews{' '}
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="group inline-flex w-full items-center rounded-md px-3 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
-                    >
-                      {' '}
-                      Discount %{' '}
-                    </a>
-                  </li>
-                </ul>
-              </div>
+              ></div>
             </div>
           </div>
+
           <h2 className="mt-3 text-xl mb-4 ml-1 font-semibold text-gray-900 dark:text-white sm:text-2xl">
             Lenovo
           </h2>

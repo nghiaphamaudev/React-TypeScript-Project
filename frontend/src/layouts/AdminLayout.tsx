@@ -18,7 +18,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 
-import { Outlet } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 import AccountMenu from 'src/components/admin/avatar/Avatar';
 
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -216,7 +216,7 @@ export default function PersistentDrawerLeft() {
         </DrawerHeader>
         <Divider />
         <List>
-          {['DashBoard', 'Product', 'Users', 'Chart'].map((text, index) => {
+          {['DashBoard', 'Products', 'Users', 'Chart'].map((text, index) => {
             if (text === 'Chart') {
               return (
                 <List
@@ -226,6 +226,7 @@ export default function PersistentDrawerLeft() {
                     bgcolor: 'background.paper',
                   }}
                   component="nav"
+                  key={text}
                   aria-labelledby="nested-list-subheader"
                   subheader={undefined}
                 >
@@ -251,10 +252,13 @@ export default function PersistentDrawerLeft() {
             }
             return (
               <ListItem key={text} disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>{inboxIcon[index]}</ListItemIcon>
-                  <ListItemText primary={text} />
-                </ListItemButton>
+                <Link to={`/admin/${text.toLowerCase()}`}>
+                  {' '}
+                  <ListItemButton>
+                    <ListItemIcon>{inboxIcon[index]}</ListItemIcon>
+                    <ListItemText primary={text} />
+                  </ListItemButton>
+                </Link>
               </ListItem>
             );
           })}

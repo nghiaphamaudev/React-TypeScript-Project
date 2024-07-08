@@ -14,4 +14,8 @@ export interface Products {
   favorite: boolean;
   createdAt: string;
   updatedAt: string;
+  category: {
+    name: string;
+    _id: string;
+  };
 }

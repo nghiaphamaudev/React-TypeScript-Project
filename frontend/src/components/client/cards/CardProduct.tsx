@@ -1,19 +1,27 @@
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
-import StarIcon from '@mui/icons-material/Star';
-import { grey, yellow } from '@mui/material/colors';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import { Products } from 'src/types/products';
 import { Link } from 'react-router-dom';
+import TextRating from 'src/components/ratings/rating';
+import { useState } from 'react';
+import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';
+import { useSnackbar } from '../snackbar/Snackbar';
 
 type CardProductProps = {
   product: Products;
 };
 const CardProduct = ({ product }: CardProductProps, key: number) => {
-  const arrayStar = [1, 2, 3, 4, 5];
-
+  const { showSnackbar } = useSnackbar();
+  const [heart, setHeart] = useState<boolean>(false);
+  const hanleClickHeart = () => {
+    setHeart(() => !heart);
+  };
+  if (heart) {
+    showSnackbar('success', 'Added product to favorite!');
+  }
   return (
     <div>
       <div
@@ -42,65 +50,47 @@ const CardProduct = ({ product }: CardProductProps, key: number) => {
               >
                 <VisibilityIcon fontSize="small" />
               </Link>
-              <div
-                id="tooltip-quick-look"
-                role="tooltip"
-                className="tooltip invisible absolute z-10 inline-block rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white opacity-0 shadow-sm transition-opacity duration-300 dark:bg-gray-700"
-                data-popper-placement="top"
-              >
-                Quick look
-                <div className="tooltip-arrow" data-popper-arrow="" />
-              </div>
+
               <button
-                type="button"
-                data-tooltip-target="tooltip-add-to-favorites"
+                onClick={hanleClickHeart}
                 className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
               >
-                <span className="sr-only"> Add to Favorites </span>
-                <FavoriteBorderIcon fontSize="small" />
+                {!heart ? (
+                  <FavoriteBorderIcon fontSize="small" />
+                ) : (
+                  <FavoriteOutlinedIcon fontSize="small" />
+                )}
               </button>
-              <div
-                id="tooltip-add-to-favorites"
-                role="tooltip"
-                className="tooltip invisible absolute z-10 inline-block rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white opacity-0 shadow-sm transition-opacity duration-300 dark:bg-gray-700"
-                data-popper-placement="top"
-              >
-                Add to favorites
-                <div className="tooltip-arrow" data-popper-arrow="" />
-              </div>
             </div>
           </div>
-          <a
-            href="#"
-            className="product-name text-lg font-semibold leading-tight text-gray-900 hover:underline dark:text-white"
+          <div
+            style={{
+              display: 'block',
+              overflow: 'hidden',
+              maxHeight: '3.6em',
+              lineHeight: '1.8em',
+            }}
           >
-            {product.name}, 1TB HDD, {product.monitor}, M3 Max
-          </a>
+            <Link
+              to={`/product/${product._id}`}
+              className="product-name text-lg font-semibold leading-tight text-gray-900 hover:underline dark:text-white block overflow-hidden text-ellipsis"
+              style={{
+                maxHeight: '3.6em',
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+              }}
+            >
+              {product.name}, 1TB HDD, {product.monitor}, M3 Max
+            </Link>
+          </div>
+
           <div className="ratings mt-2 flex items-center gap-2">
             <div className="stars flex items-center">
-              {arrayStar.map((currentValue, index) => {
-                if (
-                  product?.ratingsAverage &&
-                  Math.round(product?.ratingsAverage) > currentValue
-                )
-                  return (
-                    <StarIcon
-                      key={index}
-                      fontSize="small"
-                      sx={{ color: yellow[700] }}
-                    />
-                  );
-                return (
-                  <StarIcon
-                    fontSize="small"
-                    key={index}
-                    sx={{ color: grey[500] }}
-                  />
-                );
-              })}
+              <TextRating value={product.ratingsAverage} />
             </div>
             <p className="rating-value text-sm font-medium text-gray-900 dark:text-white">
-              {product.ratingsAverage && Math.round(product.ratingsAverage)}
+              {product.ratingsAverage}
             </p>
             <p className="rating-quantity text-sm font-medium text-gray-500 dark:text-gray-400">
               ({product.ratingsQuantity})
@@ -124,13 +114,13 @@ const CardProduct = ({ product }: CardProductProps, key: number) => {
             <p className="price text-2xl font-extrabold leading-tight text-gray-900 dark:text-white">
               ${product.price}
             </p>
-            <button
-              type="button"
+            <Link
+              to={`/product/${product._id}`}
               className="add-to-cart text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
             >
               <AddShoppingCartIcon fontSize="small" />
               Add to cart
-            </button>
+            </Link>
           </div>
         </div>
       </div>

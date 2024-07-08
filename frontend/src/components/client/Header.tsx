@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import AccountMenu from '../admin/avatar/Avatar';
 const Header = () => {
   const [activate, setActivate] = useState('home');
 
@@ -143,23 +144,10 @@ const Header = () => {
               </button>
               {/* Profile dropdown */}
               <div className="relative ml-3">
-                <div>
-                  <button
-                    type="button"
-                    className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                    id="user-menu-button"
-                    aria-expanded="false"
-                    aria-haspopup="true"
-                  >
-                    <span className="absolute -inset-1.5" />
-                    <span className="sr-only">Open user menu</span>
-                    <img
-                      className="h-8 w-8 rounded-full"
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                      alt=""
-                    />
-                  </button>
-                </div>
+                <AccountMenu
+                  explain="Pham Nghia Jr"
+                  source="https://img.freepik.com/free-photo/pretty-young-woman-happy-surprised-expression-city-background_1194-588814.jpg?t=st=1720433764~exp=1720437364~hmac=896edbc5b2bd08bb1ae8bc94eafcdce02a540aed5d59201d964a58a9971f3dd1&w=1380"
+                />
               </div>
             </div>
           </div>

@@ -63,6 +63,13 @@ const laptopModel = mongoose.Schema(
     timestamps: true,
   }
 );
+laptopModel.pre(/^find/, function (next) {
+  this.populate({
+    path: 'category',
+    select: 'name',
+  });
+  next();
+});
 
 const Laptop = mongoose.model('laptop', laptopModel);
 module.exports = Laptop;
