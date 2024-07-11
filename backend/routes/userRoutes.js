@@ -4,7 +4,7 @@ const userController = require('./../controllers/userController');
 const userRouter = express.Router();
 
 userRouter.post('/signup', authController.signup);
-userRouter.post('/login', authController.login);
+userRouter.post('/signin', authController.login);
 userRouter.post('/forgotPassword', authController.forgotPassword);
 userRouter.patch('/resetPassword/:token', authController.resetPassword);
 

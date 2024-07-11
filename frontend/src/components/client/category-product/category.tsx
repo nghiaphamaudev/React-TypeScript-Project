@@ -19,4 +19,4 @@ const categoryProduct = ({ products, category }: categoryProductProps) => {
   );
 };
 
-export default category;
+export default categoryProduct;

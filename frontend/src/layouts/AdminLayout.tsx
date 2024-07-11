@@ -16,11 +16,10 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
 
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import AccountMenu from 'src/components/admin/avatar/Avatar';
-
+import { useEffect } from 'react';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
@@ -31,6 +30,7 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
 import StarBorder from '@mui/icons-material/StarBorder';
+import { useSnackbar } from 'src/contexts/Snackbar';
 const drawerWidth = 240;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
@@ -82,10 +82,24 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   justifyContent: 'flex-end',
 }));
 
-export default function PersistentDrawerLeft() {
+export default function AdminLayout() {
+  const { showSnackbar } = useSnackbar();
+  const navigate = useNavigate();
+  const token = localStorage.getItem('accessToken');
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
   const [openMenu, setOpenMenu] = React.useState(false);
+
+  useEffect(() => {
+    if (!token) {
+      showSnackbar('error', 'You not logged. Please login again!');
+      setTimeout(() => {
+        navigate('/login');
+      }, 3000);
+    }
+
+    return;
+  }, []);
 
   const handleClick = () => {
     setOpenMenu(() => !openMenu);

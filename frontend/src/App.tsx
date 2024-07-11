@@ -17,7 +17,8 @@ import AdminLayout from './layouts/AdminLayout';
 import ListProduct from './components/admin/ListProduct';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { SnackbarProvider } from './components/client/snackbar/Snackbar';
+import { SnackbarProvider } from './contexts/Snackbar';
+import { LinearLoadingProvider } from './contexts/Progress';
 
 const theme = createTheme({
   typography: {
@@ -66,7 +67,9 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <SnackbarProvider>
-        <main>{routes}</main>
+        <LinearLoadingProvider>
+          <main>{routes}</main>
+        </LinearLoadingProvider>
       </SnackbarProvider>
     </ThemeProvider>
   );

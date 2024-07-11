@@ -10,9 +10,13 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
     validate: [validator.isEmail, 'Vui lòng cung cấp email hợp lệ!'],
   },
+  username: {
+    type: String,
+    required: [true, 'Please provide your username !'],
+  },
   fullName: {
     type: String,
-    required: [true, 'Vui lòng cung cấp tên của bạn!'],
+    // required: [true, 'Vui lòng cung cấp tên của bạn!'],
   },
   photo: {
     type: String,

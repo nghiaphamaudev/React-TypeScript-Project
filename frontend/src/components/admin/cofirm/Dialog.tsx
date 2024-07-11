@@ -6,7 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import axios from 'axios';
-import { useSnackbar } from 'src/components/client/snackbar/Snackbar';
+import { useSnackbar } from 'src/contexts/Snackbar';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import pink from '@mui/material/colors/pink';
 import { IconButton } from '@mui/material';

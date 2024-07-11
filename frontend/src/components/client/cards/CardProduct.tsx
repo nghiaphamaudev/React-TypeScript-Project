@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import TextRating from 'src/components/ratings/rating';
 import { useState } from 'react';
 import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';
-import { useSnackbar } from '../snackbar/Snackbar';
+import { useSnackbar } from 'src/contexts/Snackbar';
 
 type CardProductProps = {
   product: Products;
