@@ -1,7 +1,6 @@
 import CardProduct from 'src/components/client/cards/CardProduct';
 import { useEffect, useState } from 'react';
 import { Products } from 'src/types/products';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'src/contexts/Snackbar';
 import * as React from 'react';
@@ -9,8 +8,6 @@ import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useLinearLoading } from 'src/contexts/Progress';
-
-import SearchIcon from '@mui/icons-material/Search';
 import axiosInstance from 'src/config/axiosConfig';
 
 const AllProduct = () => {
@@ -32,6 +29,7 @@ const AllProduct = () => {
     try {
       const { data } = await axiosInstance.get('/laptops');
       setProducts(() => data.data);
+      console.log(data.data);
     } catch (error: any) {
       //Khi ko co internet
       if (error.code === 'ERR_NETWORK') {
@@ -43,6 +41,7 @@ const AllProduct = () => {
       }
       if (error.code === 'ERR_BAD_REQUEST') {
         //Api ko ton tai
+        console.log(error);
         return showSnackbar('error', 'API not found! Please connect again!');
       } else {
         navigate('/404');

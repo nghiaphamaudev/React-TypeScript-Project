@@ -23,7 +23,7 @@ const laptopModel = mongoose.Schema(
       default: 0,
     },
     coverImg: String,
-    photo: [String],
+    images: [String],
     priceDiscount: {
       type: Number,
       validate: {

@@ -4,16 +4,21 @@ import BorderColorIcon from '@mui/icons-material/BorderColor';
 import { yellow } from '@mui/material/colors';
 import { useState, useEffect } from 'react';
 import { Products } from 'src/types/products';
-import axios from 'axios';
+
 import DeleteDialog from './cofirm/Dialog';
 import TextRating from '../ratings/rating';
+
+import axiosInstance from 'src/config/axiosConfig';
+import TransitionsModal from './Modal';
+import AddProduct from './AddProduct';
+import CardProduct from '../client/cards/CardProduct';
 
 const ListProduct = () => {
   const [products, setProducts] = useState<Products[]>([]);
   const reloadProduct = () => getAllProduct();
   const getAllProduct = async () => {
     try {
-      const { data } = await axios.get('http://127.0.0.1:8000/api/v1/laptops');
+      const { data } = await axiosInstance.get('/laptops');
       setProducts(() => data.data);
     } catch (error: any) {
       if (error.code === 'ERR_NETWORK') {
@@ -38,7 +43,7 @@ const ListProduct = () => {
                 <div className="flex-1 flex items-center space-x-2">
                   <h5>
                     <span className="text-gray-600">All Products:</span>
-                    <span className="dark:text-white"> 123456</span>
+                    <span className="dark:text-white"> {products.length}</span>
                   </h5>
                 </div>
               </div>
@@ -74,15 +79,12 @@ const ListProduct = () => {
                   </form>
                 </div>
                 <div className="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
-                  <button
-                    type="button"
-                    id="createProductButton"
-                    data-modal-toggle="createProductModal"
-                    className="flex items-center justify-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                  >
-                    <AddIcon />
-                    Add product
-                  </button>
+                  <TransitionsModal
+                    useCustom={true}
+                    icon={<AddIcon />}
+                    title="Add product"
+                    content={<AddProduct />}
+                  />
                 </div>
               </div>
               <div className="overflow-x-auto">
@@ -127,8 +129,8 @@ const ListProduct = () => {
                         >
                           <div className="flex items-center mr-3">
                             <img
-                              src={product.coverImg}
-                              alt="iMac Front Image"
+                              src={`/img/products/${product.coverImg}`}
+                              alt={product.name}
                               className=" w-28 mr-3 ml-2"
                             />
                           </div>
@@ -157,7 +159,15 @@ const ListProduct = () => {
                         <td className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                           <div className="flex items-center space-x-2">
                             <BorderColorIcon color="primary" />
-                            <VisibilityIcon sx={{ color: yellow[700] }} />
+                            <TransitionsModal
+                              useCustom={false}
+                              icon={
+                                <VisibilityIcon sx={{ color: yellow[700] }} />
+                              }
+                              title=""
+                              content={<CardProduct product={product} />}
+                            />
+
                             <DeleteDialog
                               id={product._id}
                               reloadProduct={reloadProduct}

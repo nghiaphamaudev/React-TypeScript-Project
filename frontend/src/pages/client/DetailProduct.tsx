@@ -28,6 +28,7 @@ const DetailProduct = () => {
   const [count, setCount] = useState<number>(1);
   const [img, setImg] = useState<string>();
   const [product, setProduct] = useState<Products | undefined>();
+
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
@@ -93,7 +94,7 @@ const DetailProduct = () => {
                   <div className="lg:col-span-3 w-full lg:sticky top-0 text-center">
                     <div className=" px-6 py-8 rounded-xl ">
                       <img
-                        src={img}
+                        src={`/img/products/${img}`}
                         alt="Product"
                         className="w-12/12 rounded object-cover mx-auto"
                       />
@@ -106,19 +107,19 @@ const DetailProduct = () => {
                         key={product?._id}
                       >
                         <img
-                          src={product?.coverImg}
+                          src={`/img/products/${product?.coverImg}`}
                           alt="Product2"
                           className="w-full object-contain"
                         />
                       </button>
-                      {product?.photo.map((photo, index) => (
+                      {product?.images.map((image, index) => (
                         <button
-                          onClick={() => hanldeClickImg(photo)}
+                          onClick={() => hanldeClickImg(image)}
                           className="w-32 h-40 flex items-cemter justify-center rounded-xl p-4 cursor-pointer"
                           key={index}
                         >
                           <img
-                            src={photo}
+                            src={`/img/products/${image}`}
                             alt="Product2"
                             className="w-full object-contain"
                           />

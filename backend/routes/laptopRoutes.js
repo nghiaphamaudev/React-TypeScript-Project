@@ -5,7 +5,11 @@ const laptopRouter = express.Router();
 laptopRouter
   .route('/')
   .get(laptopController.getAllLatops)
-  .post(laptopController.createLaptop);
+  .post(
+    laptopController.uploadLaptopImages,
+    laptopController.resizeImages,
+    laptopController.createLaptop
+  );
 
 laptopRouter
   .route('/:id')

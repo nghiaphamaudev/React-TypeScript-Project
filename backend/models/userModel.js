@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema({
       validator: function (el) {
         return this.password === el;
       },
-      message: 'Mật khẩu xác nhận không trùng khớp với mật khẩu đã nhập!',
+      message: 'The confirm password not match with password. Try again!',
     },
   },
   passwordChangedAt: Date,

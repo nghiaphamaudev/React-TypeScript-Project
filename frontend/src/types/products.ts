@@ -6,7 +6,7 @@ export interface Products {
   ratingsAverage: number | undefined;
   ratingsQuantity: number;
   coverImg: string;
-  photo: [string];
+  images: [string];
   priceDiscount: number;
   version: number;
   summary: string;

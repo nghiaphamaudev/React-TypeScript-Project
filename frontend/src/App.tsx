@@ -14,11 +14,13 @@ import Checkout from './components/client/Checkout';
 import Payment from './components/client/Payment';
 import ShoppingLayout from './layouts/ShoppingLayout';
 import AdminLayout from './layouts/AdminLayout';
-import ListProduct from './components/admin/ListProduct';
+
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { SnackbarProvider } from './contexts/Snackbar';
 import { LinearLoadingProvider } from './contexts/Progress';
+import PrivateRoute from './config/privateRouter';
+import ListProduct from './components/admin/ListProduct';
 
 const theme = createTheme({
   typography: {

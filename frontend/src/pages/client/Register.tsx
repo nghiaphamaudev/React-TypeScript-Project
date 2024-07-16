@@ -6,8 +6,10 @@ import Box from '@mui/material/Box';
 
 import TextField from '@mui/material/TextField';
 import { Typography } from '@mui/material';
-import Button from 'src/components/client/buttons/Button';
+import Button from 'src/components/client/buttons/MyButton';
 import { Link, useNavigate } from 'react-router-dom';
+import axiosInstance from 'src/config/axiosConfig';
+import MyButton from 'src/components/client/buttons/MyButton';
 
 type RegisterFormParams = {
   username: string;
@@ -26,12 +28,13 @@ const Register = () => {
 
   const onSubmit: SubmitHandler<RegisterFormParams> = async (data) => {
     try {
-      await axios.post('http://127.0.0.1:8000/api/v1/users/signup', data);
+      await axiosInstance.post('/users/signup', data);
       showSnackbar('success', 'Register is successfully!');
       setTimeout(() => {
         navigate('/login');
       }, 3000);
     } catch (error: any) {
+      console.log(error);
       showSnackbar('error', error.response.data.message);
     }
   };
@@ -67,7 +70,6 @@ const Register = () => {
                   <TextField
                     fullWidth
                     id="fullWidth"
-                    autoComplete="on"
                     {...register('username', {
                       required: 'Username is required!',
                     })}
@@ -116,7 +118,7 @@ const Register = () => {
                       required: 'Password is required',
                       minLength: {
                         value: 8,
-                        message: 'Password is min length 6 characters',
+                        message: 'Password is min length 8 characters',
                       },
                     })}
                     type="password"
@@ -141,7 +143,7 @@ const Register = () => {
                       required: 'Password confirm is required',
                       minLength: {
                         value: 8,
-                        message: 'Password confirm is min length 6 characters',
+                        message: 'Password confirm is min length 8 characters',
                       },
                     })}
                     type="password"
@@ -176,7 +178,7 @@ const Register = () => {
                     Forgot password?
                   </a>
                 </div>
-                <Button title="Submit" symbol={undefined} />
+                <MyButton title="Submit" symbol={undefined} />
 
                 <p className="text-sm font-light text-gray-600 dark:text-gray-400">
                   Don’t have an account yet?{' '}

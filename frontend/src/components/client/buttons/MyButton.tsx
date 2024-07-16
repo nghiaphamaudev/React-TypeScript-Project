@@ -4,7 +4,7 @@ type ButtonProps = {
   symbol: React.ReactNode;
 };
 
-const Button: React.FC<ButtonProps> = ({ title, symbol }) => {
+const MyButton: React.FC<ButtonProps> = ({ title, symbol }) => {
   return (
     <div>
       <button
@@ -18,4 +18,4 @@ const Button: React.FC<ButtonProps> = ({ title, symbol }) => {
   );
 };
 
-export default Button;
+export default MyButton;

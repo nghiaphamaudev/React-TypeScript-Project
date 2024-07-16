@@ -1,4 +1,4 @@
-import Button from './buttons/Button';
+import Button from './buttons/MyButton';
 import AddIcon from '@mui/icons-material/Add';
 const Checkout = () => {
   return (

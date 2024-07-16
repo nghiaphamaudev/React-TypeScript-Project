@@ -2,7 +2,9 @@ import { Box, TextField, Typography } from '@mui/material';
 import axios from 'axios';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
-import Button from 'src/components/client/buttons/Button';
+import MyButton from 'src/components/client/buttons/MyButton';
+import Button from 'src/components/client/buttons/MyButton';
+import axiosInstance from 'src/config/axiosConfig';
 import { useSnackbar } from 'src/contexts/Snackbar';
 
 type LoginFormParams = {
@@ -20,12 +22,9 @@ const Login = () => {
 
   const onSubmit: SubmitHandler<LoginFormParams> = async (data) => {
     try {
-      const res = await axios.post(
-        'http://127.0.0.1:8000/api/v1/users/signin',
-        data
-      );
+      const res = await axiosInstance.post('/users/signin', data);
       localStorage.setItem('accessToken', res.data.accessToken);
-      showSnackbar('success', 'Register is successfully!');
+      showSnackbar('success', 'Login is successfully!');
       setTimeout(() => {
         navigate('/home');
       }, 3000);
@@ -129,7 +128,7 @@ const Login = () => {
                     Forgot password?
                   </a>
                 </div>
-                <Button title="Submit" symbol={undefined} />
+                <MyButton title="Submit" symbol={undefined} />
 
                 <p className="text-sm font-light text-gray-600 dark:text-gray-400">
                   Don’t have an account yet?{' '}

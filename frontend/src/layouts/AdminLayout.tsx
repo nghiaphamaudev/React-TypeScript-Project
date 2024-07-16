@@ -17,7 +17,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Link, Navigate, Outlet, useNavigate } from 'react-router-dom';
 import AccountMenu from 'src/components/admin/avatar/Avatar';
 import { useEffect } from 'react';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -97,7 +97,6 @@ export default function AdminLayout() {
         navigate('/login');
       }, 3000);
     }
-
     return;
   }, []);
 
@@ -120,8 +119,9 @@ export default function AdminLayout() {
   ];
 
   const mailIcon = [<SettingsIcon />, <LogoutIcon />];
-
-  return (
+  return !token ? (
+    <Navigate to={'/login'} replace />
+  ) : (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
@@ -139,11 +139,7 @@ export default function AdminLayout() {
                   <MenuIcon />
                 </IconButton>
 
-                <form
-                  action="#"
-                  method="GET"
-                  className="hidden lg:block lg:pl-2"
-                >
+                <form action="#" method="GET" className=" lg:block lg:pl-2">
                   <label htmlFor="topbar-search" className="sr-only">
                     Search
                   </label>

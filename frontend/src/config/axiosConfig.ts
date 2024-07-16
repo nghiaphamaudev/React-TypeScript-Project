@@ -6,7 +6,21 @@ function getToken(): string | null {
 
 const axiosInstance = axios.create({
   baseURL: 'http://127.0.0.1:8000/api/v1',
-  headers: { Authorization: `Bearer ${getToken()}` },
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
+
+axiosInstance.interceptors.request.use(
+  (config) => {
+    config.headers['Authorization'] = getToken()
+      ? `Bearer ${getToken()}`
+      : undefined;
+    return config;
+  },
+  (error) => {
+    Promise.reject(error);
+  }
+);
 
 export default axiosInstance;

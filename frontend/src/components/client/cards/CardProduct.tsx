@@ -32,7 +32,7 @@ const CardProduct = ({ product }: CardProductProps, key: number) => {
           <Link to={`/product/${product._id}`}>
             <img
               className="mx-auto w-full h-full object-cover dark:hidden"
-              src={product.coverImg}
+              src={`/img/products/${product.coverImg}`}
             />
           </Link>
         </div>

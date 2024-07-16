@@ -10,6 +10,7 @@ const handleCastError = (error) => {
   const message = 'The ID product not existed!';
   return new AppError(message, 400);
 };
+
 const handleDuplicateDB = (error) => {
   const valueDuplicate = error.errorResponse.keyValue;
   let values = Object.getOwnPropertyNames(valueDuplicate);
@@ -17,7 +18,7 @@ const handleDuplicateDB = (error) => {
     value.replace(value[0], value[0].toUpperCase())
   );
   values = values.join(' ');
-  const message = `${values} đã tồn tại .Vui lòng thử lại!`;
+  const message = `${values} has exsisted . Try again!`;
   return new AppError(message, 400);
 };
 
