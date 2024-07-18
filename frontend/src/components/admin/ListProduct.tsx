@@ -83,7 +83,7 @@ const ListProduct = () => {
                     useCustom={true}
                     icon={<AddIcon />}
                     title="Add product"
-                    content={<AddProduct />}
+                    content={<AddProduct mode="create" />}
                   />
                 </div>
               </div>
@@ -158,7 +158,17 @@ const ListProduct = () => {
                         <td className="px-4 py-3">{product.summary}</td>
                         <td className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                           <div className="flex items-center space-x-2">
-                            <BorderColorIcon color="primary" />
+                            <TransitionsModal
+                              useCustom={false}
+                              icon={<BorderColorIcon color="primary" />}
+                              title=""
+                              content={
+                                <AddProduct
+                                  mode="update"
+                                  initialData={product}
+                                />
+                              }
+                            />
                             <TransitionsModal
                               useCustom={false}
                               icon={

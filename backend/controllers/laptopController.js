@@ -44,35 +44,87 @@ exports.uploadLaptopImages = upload.fields([
 ]);
 
 exports.resizeImages = catchAsync(async (req, res, next) => {
-  if (!req.files.coverImg || !req.files.images) return next();
+  //create
+  if (!req.params.id) {
+    if (!req.files.coverImg || !req.files.images) {
+      return next(new AppError('You must choose a photo before submit', 400));
+    }
+
+    req.body.coverImg = `laptop-${Date.now()}-cover.jpeg`;
+    await sharp(req.files.coverImg[0].buffer)
+      .toFormat('png')
+      .png({ quality: 100 })
+      .toFile(
+        path.join(
+          __dirname,
+          `../../frontend/public/img/products/${req.body.coverImg}`
+        )
+      );
+
+    req.body.images = [];
+    await Promise.all(
+      req.files.images.map(async (file, index) => {
+        const filename = `laptop-${Date.now()}-image-${index + 1}.jpeg`;
+        await sharp(file.buffer)
+          .toFormat('png')
+          .png({ quality: 100 })
+          .toFile(
+            path.join(
+              __dirname,
+              `../../frontend/public/img/products/${filename}`
+            )
+          );
+        req.body.images.push(filename);
+      })
+    );
+
+    return next();
+  } else {
+    if (req.body.coverImg && req.body.images) {
+      return next();
+    }
+    //check 1 trong hai trường hợp có sự thay đổi về hình ảnh
+    if (req.files.coverImg) {
+      req.body.coverImg = `laptop-${Date.now()}-cover.jpeg`;
+      await sharp(req.files.coverImg[0].buffer)
+        .toFormat('png')
+        .png({ quality: 100 })
+        .toFile(
+          path.join(
+            __dirname,
+            `../../frontend/public/img/products/${req.body.coverImg}`
+          )
+        );
+    }
+
+    // Nếu có tệp images, thực hiện xử lý và gán vào req.body
+    if (req.files.images) {
+      req.body.images = [];
+      await Promise.all(
+        req.files.images.map(async (file, index) => {
+          const filename = `laptop-${Date.now()}-image-${index + 1}.jpeg`;
+          await sharp(file.buffer)
+            .toFormat('png')
+            .png({ quality: 100 })
+            .toFile(
+              path.join(
+                __dirname,
+                `../../frontend/public/img/products/${filename}`
+              )
+            );
+          req.body.images.push(filename);
+        })
+      );
+    }
+
+    return next();
+  }
+  //update
 
   //1 coverImg
-  req.body.coverImg = `laptop-${Date.now()}-cover.jpeg`;
-  await sharp(req.files.coverImg[0].buffer)
-    .toFormat('jpeg')
-    .jpeg({ quality: 100 })
-    .toFile(
-      path.join(
-        __dirname,
-        `../../frontend/public/img/products/${req.body.coverImg}`
-      )
-    );
-  //2 iamges
-  req.body.images = [];
-  await Promise.all(
-    req.files.images.map(async (file, index) => {
-      const filename = `laptop-${Date.now()}-image-${index + 1}.jpeg`;
-      await sharp(file.buffer)
-        .toFormat('jpeg')
-        .jpeg({ quality: 100 })
-        .toFile(
-          path.join(__dirname, `../../frontend/public/img/products/${filename}`)
-        );
-      req.body.images.push(filename);
-    })
-  );
-
-  next();
+  //** KHi không có thay đôi về hình ảnh thì sẽ chuyển sang middeware tiếp theo */
+  //* nếu có thì req.files chứa các tệp ảnh bao gồm coverImg, images :))
+  //* Vì vậy ta nên kiểm tra xem liệu có hoạt động đẩy file  về ảnh không
 });
 
 exports.getAllLatops = catchAsync(async (req, res, next) => {
@@ -84,9 +136,11 @@ exports.getAllLatops = catchAsync(async (req, res, next) => {
 });
 
 exports.getLaptop = catchAsync(async (req, res, next) => {
-  const laptop = await Laptop.findById(req.params.id).populate('category');
+  const laptop = await Laptop.findById(req.params.id)
+    .populate('category', '_id name') // Chỉ lấy _id và name của category
+    .select('-id');
   if (!laptop) {
-    return next(new AppError('The ID laptop not exsited!', 400));
+    return next(new AppError('The ID laptop not existed!', 400));
   }
   return res.status(200).json({
     status: 'success',
@@ -103,9 +157,8 @@ exports.deleteLaptop = catchAsync(async (req, res, next) => {
 });
 
 exports.updateLaptop = catchAsync(async (req, res, next) => {
-  const laptop = Laptop.findByIdAndUpdate(req.params.id, req.body, {
+  const laptop = await Laptop.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
-    runValidators: true,
   });
   if (!laptop) {
     return next(new AppError('The ID laptop not exsited!', 400));

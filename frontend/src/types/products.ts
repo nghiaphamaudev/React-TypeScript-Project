@@ -4,9 +4,9 @@ export interface Products {
   monitor: string;
   price: number;
   ratingsAverage: number | undefined;
-  ratingsQuantity: number;
-  coverImg: string;
-  images: [string];
+  ratingsQuantity: number | undefined;
+  coverImg: string | File;
+  images: File[] | [string];
   priceDiscount: number;
   version: number;
   summary: string;
@@ -15,7 +15,7 @@ export interface Products {
   createdAt: string;
   updatedAt: string;
   category: {
-    name: string;
+    name: string | null;
     _id: string;
   };
 }

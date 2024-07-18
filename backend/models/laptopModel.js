@@ -8,7 +8,7 @@ const laptopModel = mongoose.Schema(
     },
     monitor: {
       type: String,
-      required: [true, 'A laptop must to have a type monitor !'],
+      default: '15.6 100% RGB',
     },
     price: {
       type: Number,

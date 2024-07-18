@@ -15,6 +15,10 @@ laptopRouter
   .route('/:id')
   .get(laptopController.getLaptop)
   .delete(laptopController.deleteLaptop)
-  .patch(laptopController.updateLaptop);
+  .patch(
+    laptopController.uploadLaptopImages,
+    laptopController.resizeImages,
+    laptopController.updateLaptop
+  );
 
 module.exports = laptopRouter;

@@ -5,20 +5,19 @@ import * as React from 'react';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Select from '@mui/material/Select';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import { useState } from 'react';
-
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import MyButton from '../client/buttons/MyButton';
 import { Category } from 'src/types/category';
-
 import axiosInstance from 'src/config/axiosConfig';
 import { useSnackbar } from 'src/contexts/Snackbar';
 import { useLinearLoading } from 'src/contexts/Progress';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { Products } from 'src/types/products';
+
 const Input = styled('input')({
   display: 'none',
 });
@@ -34,32 +33,44 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
+//type khi đảy lên server
 type AddProductParams = {
+  _id: string | null;
   name: string;
   price: number;
   priceDiscount: number;
   version: number;
-  coverImg: File;
-  photo: File[];
+  coverImg: File | null | string;
+  images: File[] | [string];
   summary: string;
   description: string;
   category: string;
-  memory: string;
+};
+// props
+type AddProductProps = {
+  initialData?: Products;
+  mode: 'create' | 'update';
 };
 
-const AddProduct = () => {
-  const navigate = useNavigate();
+const AddProduct: React.FC<AddProductProps> = ({ initialData, mode }) => {
+  //call Category
   const [categories, setCategories] = useState<Category[]>([]);
-  const [photos, setPhotos] = useState<File[]>([]);
+  //su dung snackbar va loading context
   const { showSnackbar } = useSnackbar();
   const { showLoading, hideLoading } = useLinearLoading();
+  //dki form va default value khi update
   const {
     register,
     handleSubmit,
     formState: { errors },
     setValue,
-  } = useForm<AddProductParams>();
-
+  } = useForm<AddProductParams>({
+    defaultValues: {
+      ...initialData, // Sao chép toàn bộ initialData vào defaultValues
+      category: initialData?.category?._id || '', // Chỉ lấy _id của category
+    },
+  });
+  // laay ra all category
   const getCategory = async () => {
     showLoading();
     try {
@@ -72,29 +83,81 @@ const AddProduct = () => {
     }
   };
 
+  //khi submit se set cac gia tri de day len server
   const onSubmit: SubmitHandler<AddProductParams> = async (data) => {
+    const formData = new FormData();
+    formData.append('name', data.name);
+    formData.append('price', data.price.toString());
+    formData.append('priceDiscount', data.priceDiscount.toString());
+    formData.append('version', data.version.toString());
+    if (data.coverImg) {
+      formData.append('coverImg', data.coverImg);
+    } else {
+      showSnackbar('error', 'You must choose a cover image before submit.');
+      return;
+    }
+    formData.append('summary', data.summary);
+    formData.append('description', data.description);
+    formData.append('category', data.category);
+    console.log(data.category);
+    if (data.images) {
+      data.images.forEach((image) => {
+        formData.append('images', image);
+      });
+    } else {
+      showSnackbar('error', 'You must choose a image before submit.');
+      return;
+    }
+
     try {
-      await axiosInstance.post('/users/signup', data);
-      showSnackbar('success', 'Register is successfully!');
+      if (mode === 'create') {
+        await axiosInstance.post('/laptops', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        showSnackbar('success', 'Add product is successfully!');
+      } else {
+        await axiosInstance.patch(`/laptops/${initialData?._id}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        showSnackbar('success', 'Update product is successfully!');
+      }
+
       setTimeout(() => {
-        navigate('/login');
+        window.location.reload();
       }, 3000);
     } catch (error: any) {
       console.log(error);
       showSnackbar('error', error.response.data.message);
     }
   };
-
+  // khi nhan day imgae bien images se chua toan bo images object
   const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = event.target.files;
     if (selectedFiles) {
       const filesArray = Array.from(selectedFiles);
-      if (filesArray.length > 2) {
+      if (filesArray.length === 0) {
+        showSnackbar('error', 'You must choose a photo before submit!');
+      } else if (filesArray.length > 2) {
         showSnackbar('error', 'You can only upload a maximum of 2 photos.');
       } else {
-        setPhotos(filesArray);
-        setValue('photo', filesArray);
+        setValue('images', filesArray);
       }
+    } else {
+      showSnackbar('error', 'You must choose a photo before submit!');
+    }
+  };
+
+  // chua coverimg
+  const handleCoverImgChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files?.[0];
+    if (!selectedFile) {
+      showSnackbar('error', 'You must choose a cover image before submit.');
+    } else {
+      setValue('coverImg', selectedFile);
     }
   };
 
@@ -104,7 +167,7 @@ const AddProduct = () => {
 
   return (
     <div>
-      <section className="bg-white dark:bg-gray-900 overflow-auto h-screen w-">
+      <section className="bg-white dark:bg-gray-900 overflow-auto h-screen w-full">
         <div className="py-8 px-4 mx-auto max-w-2xl lg:py-16">
           <Typography
             variant="h5"
@@ -149,9 +212,10 @@ const AddProduct = () => {
                         required: 'Category is required!',
                       })}
                       error={!!errors?.category?.message}
+                      defaultValue={initialData?.category?._id || ''}
                     >
                       {categories.map((category) => (
-                        <MenuItem value={category._id}>
+                        <MenuItem value={category._id} key={category._id}>
                           {category.name}
                         </MenuItem>
                       ))}
@@ -163,10 +227,14 @@ const AddProduct = () => {
                     Price
                   </Typography>
                   <TextField
+                    type={'number'}
                     sx={{ border: 'none' }}
                     {...register('price', {
                       required: 'Price product is required!',
-                      min: 'Price product is minium 0',
+                      min: {
+                        value: 0,
+                        message: 'Price discount must be non-negative',
+                      },
                     })}
                     error={!!errors?.price?.message}
                     helperText={errors?.price?.message}
@@ -179,10 +247,14 @@ const AddProduct = () => {
                     Price Discount
                   </Typography>
                   <TextField
+                    type={'number'}
                     sx={{ border: 'none' }}
                     {...register('priceDiscount', {
                       required: 'Price discount product is required!',
-                      min: 'Price discount product is minium 0',
+                      min: {
+                        value: 0,
+                        message: 'Price discount must be non-negative',
+                      },
                     })}
                     error={!!errors?.priceDiscount?.message}
                     helperText={errors?.priceDiscount?.message}
@@ -198,11 +270,11 @@ const AddProduct = () => {
                     sx={{ border: 'none' }}
                     {...register('version', {
                       required: 'Version product is required!',
-                      min: 'Version product is minium 0',
+                      min: 0,
                     })}
                     error={!!errors?.version?.message}
                     helperText={errors?.version?.message}
-                    placeholder="Type version  product"
+                    placeholder="Type version product"
                     fullWidth
                   />
                 </div>
@@ -211,14 +283,14 @@ const AddProduct = () => {
                     Memory SSD
                   </Typography>
                   <TextField
-                    sx={{ border: 'none' }}
-                    {...register('memory', {
-                      required: 'Memory product is required!',
-                      min: 'Memory product is minium 0',
-                    })}
-                    error={!!errors?.memory?.message}
-                    helperText={errors?.memory?.message}
-                    placeholder="Type memory  product"
+                    // sx={{ border: 'none' }}
+                    // {...register('memory', {
+                    //   required: 'Memory product is required!',
+                    //   min: 0,
+                    // })}
+                    // error={!!errors?.memory?.message}
+                    // helperText={errors?.memory?.message}
+                    placeholder="Type memory product"
                     fullWidth
                   />
                 </div>
@@ -230,25 +302,19 @@ const AddProduct = () => {
                   <Box>
                     <label htmlFor="contained-button-file">
                       <Button
-                        component="label"
-                        role={undefined}
+                        component="span"
                         variant="contained"
-                        tabIndex={-1}
                         startIcon={<CloudUploadIcon />}
                       >
                         Upload file
-                        <VisuallyHiddenInput
-                          type="file"
-                          onChange={(
-                            event: React.ChangeEvent<HTMLInputElement>
-                          ) => {
-                            if (event.target.files && event.target.files[0]) {
-                              setValue('coverImg', event.target.files[0]);
-                            }
-                          }}
-                        />
                       </Button>
                     </label>
+                    <Input
+                      accept="image/*"
+                      id="contained-button-file"
+                      type="file"
+                      onChange={handleCoverImgChange}
+                    />
                   </Box>
                 </div>
 
@@ -274,15 +340,6 @@ const AddProduct = () => {
                         />
                       </Button>
                     </label>
-                    {photos.length > 0 && (
-                      <Box mt={2}>
-                        {photos.map((photo, index) => (
-                          <Typography key={index} variant="body2">
-                            {photo.name}
-                          </Typography>
-                        ))}
-                      </Box>
-                    )}
                   </Box>
                 </div>
 
@@ -311,7 +368,7 @@ const AddProduct = () => {
                       required: 'Description is required!',
                     })}
                     className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                    placeholder="Type summary product"
+                    placeholder="Type description product"
                   />
                 </div>
               </div>
