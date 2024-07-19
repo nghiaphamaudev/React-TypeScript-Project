@@ -1,17 +1,23 @@
-import EastIcon from '@mui/icons-material/East';
-import { blue } from '@mui/material/colors';
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
-import CardProduct from 'src/components/client/cards/CardProduct';
-import Progress from 'src/components/client/steps/Progress';
-import { Link } from 'react-router-dom';
+import React from 'react';
+import {
+  Box,
+  Typography,
+  Divider,
+  Button,
+  Link,
+  TextField,
+} from '@mui/material';
+import { East as EastIcon } from '@mui/icons-material';
+import { blue, green, grey } from '@mui/material/colors';
 
 const ShoppingCart = () => {
   return (
     <div>
       <div className="">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl text-center">
           Shopping Cart
         </h2>
         <div className="mt-6 sm:mt-8 p-6 shadow-xl  bg-slate-50 rounded md:gap-6 lg:flex lg:items-start xl:gap-8">
@@ -231,102 +237,202 @@ const ShoppingCart = () => {
             </div>
           </div>
           <div className="mx-auto mt-6 max-w-4xl flex-1 space-y-6 lg:mt-0 lg:w-full">
-            <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6">
-              <p className="text-xl font-semibold text-gray-900 dark:text-white">
+            <Box
+              sx={{
+                p: 4,
+                borderRadius: 2,
+                border: 1,
+                borderColor: 'grey.300',
+                backgroundColor: 'background.paper',
+                boxShadow: 1,
+                '.MuiTypography-root': { color: 'text.primary' },
+                '.MuiTypography-root.dark': { color: 'text.secondary' },
+              }}
+            >
+              <Typography variant="h6" component="p" fontWeight="bold">
                 Order summary
-              </p>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <dl className="flex items-center justify-between gap-4">
-                    <dt className="text-base font-normal text-gray-500 dark:text-gray-400">
-                      Original price
-                    </dt>
-                    <dd className="text-base font-medium text-gray-900 dark:text-white">
-                      $7,592.00
-                    </dd>
-                  </dl>
-                  <dl className="flex items-center justify-between gap-4">
-                    <dt className="text-base font-normal text-gray-500 dark:text-gray-400">
-                      Savings
-                    </dt>
-                    <dd className="text-base font-medium text-green-600">
-                      -$299.00
-                    </dd>
-                  </dl>
-                  <dl className="flex items-center justify-between gap-4">
-                    <dt className="text-base font-normal text-gray-500 dark:text-gray-400">
-                      Store Pickup
-                    </dt>
-                    <dd className="text-base font-medium text-gray-900 dark:text-white">
-                      $99
-                    </dd>
-                  </dl>
-                  <dl className="flex items-center justify-between gap-4">
-                    <dt className="text-base font-normal text-gray-500 dark:text-gray-400">
-                      Tax
-                    </dt>
-                    <dd className="text-base font-medium text-gray-900 dark:text-white">
-                      $799
-                    </dd>
-                  </dl>
-                </div>
-                <dl className="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
-                  <dt className="text-base font-bold text-gray-900 dark:text-white">
+              </Typography>
+              <Box sx={{ mt: 2 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    mb: 1,
+                  }}
+                >
+                  <Typography variant="body1" color="text.secondary">
+                    Original price
+                  </Typography>
+                  <Typography variant="body1" fontWeight="medium">
+                    $7,592.00
+                  </Typography>
+                </Box>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    mb: 1,
+                  }}
+                >
+                  <Typography variant="body1" color="text.secondary">
+                    Savings
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    fontWeight="medium"
+                    sx={{ color: green[600] }}
+                  >
+                    -$299.00
+                  </Typography>
+                </Box>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    mb: 1,
+                  }}
+                >
+                  <Typography variant="body1" color="text.secondary">
+                    Store Pickup
+                  </Typography>
+                  <Typography variant="body1" fontWeight="medium">
+                    $99
+                  </Typography>
+                </Box>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    mb: 1,
+                  }}
+                >
+                  <Typography variant="body1" color="text.secondary">
+                    Tax
+                  </Typography>
+                  <Typography variant="body1" fontWeight="medium">
+                    $799
+                  </Typography>
+                </Box>
+                <Divider sx={{ my: 2 }} />
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="body1" fontWeight="bold">
                     Total
-                  </dt>
-                  <dd className="text-base font-bold text-gray-900 dark:text-white">
+                  </Typography>
+                  <Typography variant="body1" fontWeight="bold">
                     $8,191.00
-                  </dd>
-                </dl>
-              </div>
-              <div className="flex justify-center ">
-                <button
-                  type="button"
-                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm w-full py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                  </Typography>
+                </Box>
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  sx={{ py: 1, px: 4, width: '100%', maxWidth: 300 }}
                 >
                   Proceed to Checkout
-                </button>
-              </div>
-
-              <div className="flex items-center justify-center gap-2">
-                <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
+                </Button>
+              </Box>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  mt: 3,
+                  alignItems: 'center',
+                }}
+              >
+                <Typography variant="body2" color="text.secondary">
                   or
-                </span>
+                </Typography>
                 <Link
-                  to="/products"
-                  title=""
-                  className="inline-flex items-center gap-2 text-sm font-medium text-sky-700 underline hover:no-underline dark:text-sky-500"
+                  href="/products"
+                  underline="none"
+                  sx={{ mx: 1, color: blue[700] }}
                 >
-                  Continue Shopping
+                  <Typography variant="body2" fontWeight="medium">
+                    Continue Shopping
+                  </Typography>
                 </Link>
-                <EastIcon fontSize="inherit" sx={{ color: blue[900] }} />
-              </div>
-            </div>
+                <EastIcon fontSize="small" sx={{ color: blue[900] }} />
+              </Box>
+            </Box>
             <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6">
-              <form className="space-y-4">
-                <div>
-                  <label
+              <Box component="form" sx={{ mt: 4, mb: 2 }}>
+                <Box sx={{ mb: 2 }}>
+                  <Typography
+                    component="label"
                     htmlFor="voucher"
-                    className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                    variant="body1"
+                    sx={{
+                      display: 'block',
+                      mb: 1,
+                      fontWeight: 'medium',
+                      color: 'text.primary',
+                    }}
                   >
                     Do you have a voucher or gift card?
-                  </label>
-                  <input
-                    type="text"
+                  </Typography>
+                  <TextField
                     id="voucher"
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                    fullWidth
                     placeholder=""
+                    variant="outlined"
+                    InputProps={{
+                      sx: {
+                        height: '40px',
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: 'grey.300',
+                        },
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                          borderColor: 'primary.main',
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          borderColor: 'primary.main',
+                        },
+                      },
+                    }}
+                    sx={{
+                      '& .MuiInputBase-root': {
+                        backgroundColor: 'grey.50',
+                        color: 'text.primary',
+                        borderRadius: '8px',
+                      },
+                      '& .MuiInputBase-input': {
+                        color: 'text.primary',
+                      },
+                      '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                          borderColor: 'grey.300',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: 'primary.main',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: 'primary.main',
+                        },
+                      },
+                    }}
                   />
-                </div>
-                <div className="flex justify-center ">
-                  <button
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                  <Button
                     type="button"
-                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm w-full py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                    fullWidth
+                    sx={{
+                      py: 1,
+                      backgroundColor: blue[700],
+                      color: 'white',
+                      '&:hover': {
+                        backgroundColor: blue[800],
+                      },
+                      fontWeight: 'medium',
+                      borderRadius: '8px',
+                      mb: 2,
+                    }}
                   >
                     Apply Code
-                  </button>
-                </div>
-              </form>
+                  </Button>
+                </Box>
+              </Box>
             </div>
           </div>
         </div>

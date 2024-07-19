@@ -347,28 +347,40 @@ const AddProduct: React.FC<AddProductProps> = ({ initialData, mode }) => {
                   <Typography gutterBottom sx={{ fontSize: '15px' }}>
                     Summary Product
                   </Typography>
-                  <textarea
-                    id="description"
-                    rows={5}
-                    className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                    placeholder="Type summary product"
-                    {...register('summary', {
-                      required: 'Summary is required!',
-                    })}
-                  />
+                  <div>
+                    <TextField
+                      id="description"
+                      label="Type summary product"
+                      multiline
+                      rows={5}
+                      variant="outlined"
+                      sx={{ border: 'none' }}
+                      fullWidth
+                      {...register('summary', {
+                        required: 'Summary is required!',
+                      })}
+                      error={!!errors?.summary?.message}
+                      helperText={errors?.summary?.message}
+                    />
+                  </div>
                 </div>
                 <div className="sm:col-span-2 mb-5">
                   <Typography gutterBottom sx={{ fontSize: '15px' }}>
                     Description Product
                   </Typography>
-                  <textarea
+                  <TextField
                     id="description"
+                    label="Type description product"
+                    multiline
                     rows={5}
+                    variant="outlined"
+                    sx={{ border: 'none' }}
+                    fullWidth
                     {...register('description', {
                       required: 'Description is required!',
                     })}
-                    className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                    placeholder="Type description product"
+                    error={!!errors?.description?.message}
+                    helperText={errors?.description?.message}
                   />
                 </div>
               </div>

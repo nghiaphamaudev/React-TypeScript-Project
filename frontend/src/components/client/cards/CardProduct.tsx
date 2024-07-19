@@ -111,7 +111,7 @@ const CardProduct = ({ product }: CardProductProps, key: number) => {
             </li>
           </ul>
           <div className="price-and-cart mt-4 flex items-center justify-between gap-4">
-            <p className="price text-xl font-extrabold leading-tight text-gray-900 dark:text-white">
+            <p className="price text- xl font-extrabold leading-tight text-gray-900 dark:text-white">
               ${product.price}
             </p>
             <Link

@@ -22,6 +22,11 @@ const handleDuplicateDB = (error) => {
   return new AppError(message, 400);
 };
 
+const handleJWTExpired = (error) => {
+  const message = 'Your session has expired. Please log in again.';
+  return new AppError(message, 400);
+};
+
 const sendErrorDev = (err, req, res) => {
   return res.status(err.statusCode).json({
     status: err.status,
@@ -58,6 +63,7 @@ module.exports = (err, req, res, next) => {
     if (err.name === 'ValidationError') error = handleValidatorError(error);
     if (err.code === 11000) error = handleDuplicateDB(error);
     if (err.name === 'CastError') error = handleCastError(error);
+    if (err.message === 'jwt expired') error = handleJWTExpired(error);
     sendErrorProd(error, req, res);
   }
 };

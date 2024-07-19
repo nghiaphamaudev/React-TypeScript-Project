@@ -71,5 +71,5 @@ laptopModel.pre(/^find/, function (next) {
   next();
 });
 
-const Laptop = mongoose.model('laptop', laptopModel);
+const Laptop = mongoose.model('Laptop', laptopModel);
 module.exports = Laptop;

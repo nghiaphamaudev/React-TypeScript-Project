@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const laptopRouter = require('./routes/laptopRoutes');
 const categoryRouter = require('./routes/categoryRoutes');
 const userRouter = require('./routes/userRoutes');
+const cartRouter = require('./routes/cartRoutes');
 const globalHandleError = require('./controllers/errorController');
 const AppError = require('./utils/appError');
 
@@ -25,6 +26,7 @@ if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 app.use('/api/v1/laptops', laptopRouter);
 app.use('/api/v1/categories', categoryRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/carts', cartRouter);
 
 app.all('*', (req, res, next) => {
   return next(

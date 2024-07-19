@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import AccountMenu from '../admin/avatar/Avatar';
+import CustomizedBadges from './Badge/ShoppingCartBadge';
+
 const Header = () => {
   const [activate, setActivate] = useState('home');
 
@@ -11,7 +13,6 @@ const Header = () => {
   }
   return (
     <div>
-      {' '}
       <nav className="bg-gray-800">
         <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
           <div className="relative flex h-16 items-center justify-between">
@@ -132,7 +133,7 @@ const Header = () => {
                 onClick={() => hanleClick('shopping-cart')}
               >
                 <span className="absolute -inset-1.5" />
-                <ShoppingCartIcon sx={{ fontSize: 26 }} />
+                <CustomizedBadges />
               </Link>
               <button
                 type="button"
@@ -155,7 +156,6 @@ const Header = () => {
         {/* Mobile menu, show/hide based on menu state. */}
         <div className="sm:hidden" id="mobile-menu">
           <div className="space-y-1 px-2 pb-3 pt-2">
-            {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
             <a
               className="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium"
               aria-current="page"

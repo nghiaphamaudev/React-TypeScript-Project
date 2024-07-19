@@ -4,7 +4,7 @@ import { Navigate, useRoutes } from 'react-router-dom';
 import ClientLayout from './layouts/ClientLayout';
 import HomePage from './pages/client/HomePage';
 import DetailProduct from './pages/client/DetailProduct';
-import ShoppingCart from './pages/client/ShoppingCart';
+
 import AllProduct from './pages/client/AllProduct';
 import PageNotFound from './pages/client/PageNotFound';
 import Login from './pages/client/Login';
@@ -19,8 +19,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { SnackbarProvider } from './contexts/Snackbar';
 import { LinearLoadingProvider } from './contexts/Progress';
-import PrivateRoute from './config/privateRouter';
 import ListProduct from './components/admin/ListProduct';
+import ShoppingCart from './components/client/ShoppingCart';
 
 const theme = createTheme({
   typography: {
