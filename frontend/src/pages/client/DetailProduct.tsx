@@ -7,8 +7,8 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useEffect, useState } from 'react';
 import { blue, yellow } from '@mui/material/colors';
 import { Products } from 'src/types/products';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import { useNavigate, useParams } from 'react-router-dom';
+import { IconButton, TextField } from '@mui/material';
 import { useSnackbar } from 'src/contexts/Snackbar';
 import TextRating from 'src/components/ratings/rating';
 import * as React from 'react';
@@ -19,8 +19,11 @@ import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import { useLinearLoading } from 'src/contexts/Progress';
 import axiosInstance from 'src/config/axiosConfig';
+import { useCart } from 'src/contexts/StateCart';
 
 const DetailProduct = () => {
+  const navigate = useNavigate();
+  const { cart, setCart } = useCart();
   const { id } = useParams();
   const { showSnackbar } = useSnackbar();
   const { showLoading, hideLoading } = useLinearLoading();
@@ -55,11 +58,31 @@ const DetailProduct = () => {
     setCount((currentValue) => (currentValue += 1));
   };
 
+  const handleAddToCart = async (idProduct: string, price: number) => {
+    const data = {
+      product: idProduct,
+      quantity: count,
+      price: price,
+    };
+    try {
+      const response = await axiosInstance.post('/carts', data);
+
+      showSnackbar('success', 'Add to cart is successfully!');
+      setCart(response.data);
+    } catch (error: any) {
+      showSnackbar('error', error.response.data.message);
+    }
+  };
+
   const hanldeClickMinus = () => {
     if (count === 1) {
       return setCount((currentValue) => currentValue);
     }
     return setCount((currentValue) => (currentValue -= 1));
+  };
+  const handleChangeValue = (event: any) => {
+    const value = Math.max(Number(event.target.value), 0);
+    setCount(value);
   };
 
   const hanldeClickImg = (imgLink: string | undefined) => {
@@ -157,27 +180,69 @@ const DetailProduct = () => {
                     <h3 className="text-lg font-bold text-gray-800">
                       Quantity
                     </h3>
-                    <div className="flex divide-x border w-max mt-4 rounded overflow-hidden">
-                      <button
-                        type="button"
-                        onClick={hanldeClickMinus}
-                        className="bg-gray-100 w-10 h-9 font-semibold flex items-center justify-center"
+                    <div className="flex divide-x  w-max mt-4 rounded overflow-hidden">
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+
+                          borderRadius: 1,
+                          overflow: 'hidden',
+                          mt: 2,
+                          boxShadow: 1, // thêm đổ bóng
+                        }}
                       >
-                        <RemoveIcon />
-                      </button>
-                      <button
-                        type="button"
-                        className="bg-transparent w-10 h-9 font-semibold flex items-center justify-center text-gray-800 text-lg"
-                      >
-                        {count}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={hanldeClickAdd}
-                        className="bg-gray-800 text-white w-10 h-9 font-semibold flex items-center justify-center"
-                      >
-                        <AddIcon />
-                      </button>
+                        <IconButton
+                          onClick={hanldeClickMinus}
+                          sx={{
+                            backgroundColor: 'lightgrey',
+                            color: 'black',
+                            borderRadius: 0,
+                            '&:hover': {
+                              backgroundColor: 'darkgrey',
+                            },
+                            minWidth: '3rem', // thêm kích thước tối thiểu để cân bằng với TextField
+                            height: '2.25rem',
+                          }}
+                        >
+                          <RemoveIcon />
+                        </IconButton>
+
+                        <TextField
+                          type="number"
+                          value={count}
+                          onChange={handleChangeValue}
+                          variant="outlined"
+                          InputProps={{
+                            sx: {
+                              backgroundColor: 'grey.100',
+                              width: '5rem',
+                              height: '2.25rem',
+                              fontWeight: 'bold',
+                              textAlign: 'center', // căn giữa văn bản
+                              '& input': {
+                                textAlign: 'center', // căn giữa văn bản trong input
+                              },
+                            },
+                          }}
+                        />
+
+                        <IconButton
+                          onClick={hanldeClickAdd}
+                          sx={{
+                            backgroundColor: 'black',
+                            color: 'white',
+                            borderRadius: 0,
+                            '&:hover': {
+                              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            },
+                            minWidth: '3rem', // thêm kích thước tối thiểu để cân bằng với TextField
+                            height: '2.25rem',
+                          }}
+                        >
+                          <AddIcon />
+                        </IconButton>
+                      </Box>
                     </div>
                   </div>
 
@@ -191,6 +256,9 @@ const DetailProduct = () => {
                     </button>
                     <button
                       type="button"
+                      onClick={() =>
+                        handleAddToCart(product._id, product.price)
+                      }
                       className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
                     >
                       <AddShoppingCartIcon />

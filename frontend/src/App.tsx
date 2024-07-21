@@ -21,6 +21,7 @@ import { SnackbarProvider } from './contexts/Snackbar';
 import { LinearLoadingProvider } from './contexts/Progress';
 import ListProduct from './components/admin/ListProduct';
 import ShoppingCart from './components/client/ShoppingCart';
+import { CartProvider } from './contexts/StateCart';
 
 const theme = createTheme({
   typography: {

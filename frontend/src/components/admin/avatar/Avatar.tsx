@@ -13,6 +13,9 @@ import Tooltip from '@mui/material/Tooltip';
 import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
+import { Link, useNavigate } from 'react-router-dom';
+import axiosInstance from 'src/config/axiosConfig';
+import { useSnackbar } from 'src/contexts/Snackbar';
 
 type AccountMenuProps = {
   explain: string;
@@ -56,12 +59,26 @@ const SmallAvatar = styled(Avatar)(({ theme }) => ({
 
 export default function AccountMenu({ explain, source }: AccountMenuProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const { showSnackbar } = useSnackbar();
+  const navigate = useNavigate();
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+  const hanleLogout = async () => {
+    try {
+      await axiosInstance.get('/users/logout');
+      showSnackbar('success', 'Logout is successfully!');
+    } catch (error: any) {
+      showSnackbar('error', error.response.data.message);
+    } finally {
+      setTimeout(() => {
+        navigate('/login');
+      }, 3000);
+    }
   };
   return (
     <React.Fragment>
@@ -128,7 +145,7 @@ export default function AccountMenu({ explain, source }: AccountMenuProps) {
           <ListItemIcon>
             <PersonAdd fontSize="small" />
           </ListItemIcon>
-          Add another account
+          <Link to={'/login'}>Add to another account</Link>
         </MenuItem>
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
@@ -136,7 +153,7 @@ export default function AccountMenu({ explain, source }: AccountMenuProps) {
           </ListItemIcon>
           Settings
         </MenuItem>
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={hanleLogout}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>

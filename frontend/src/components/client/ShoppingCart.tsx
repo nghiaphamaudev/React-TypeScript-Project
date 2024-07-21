@@ -1,7 +1,6 @@
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
-import React from 'react';
 import {
   Box,
   Typography,
@@ -11,9 +10,33 @@ import {
   TextField,
 } from '@mui/material';
 import { East as EastIcon } from '@mui/icons-material';
-import { blue, green, grey } from '@mui/material/colors';
+import { blue, green } from '@mui/material/colors';
+import { useState, useEffect } from 'react';
+import { Cart } from 'src/types/cart';
+import { useLinearLoading } from 'src/contexts/Progress';
+import axiosInstance from 'src/config/axiosConfig';
+import { useSnackbar } from 'src/contexts/Snackbar';
+import TextRating from '../ratings/rating';
 
 const ShoppingCart = () => {
+  const { showLoading, hideLoading } = useLinearLoading();
+  const { showSnackbar } = useSnackbar();
+  const [cart, setCart] = useState<Cart | undefined>();
+  const getCart = async () => {
+    showLoading();
+    try {
+      const data = await axiosInstance.get('/carts');
+      setCart(data.data.data);
+    } catch (error: any) {
+      showSnackbar('error', error.response.data.message);
+    } finally {
+      hideLoading();
+    }
+  };
+  useEffect(() => {
+    getCart();
+  }, []);
+
   return (
     <div>
       <div className="">
@@ -22,219 +45,71 @@ const ShoppingCart = () => {
         </h2>
         <div className="mt-6 sm:mt-8 p-6 shadow-xl  bg-slate-50 rounded md:gap-6 lg:flex lg:items-start xl:gap-8">
           <div className="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
-            <div className=" relative mb-5">
-              <div className="absolute right-0 ">
-                <button>
-                  <ClearIcon />
-                </button>
-              </div>
-              <div className="space-y-6 ">
-                <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6">
-                  <div className="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
-                    <a href="#" className="shrink-0 md:order-1">
-                      <img
-                        className="h-20 w-20 dark:hidden"
-                        src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front.svg"
-                        alt="imac image"
-                      />
-                      <img
-                        className="hidden h-20 w-20 dark:block"
-                        src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg"
-                        alt="imac image"
-                      />
-                    </a>
-                    <label htmlFor="counter-input" className="sr-only">
-                      Choose quantity:
-                    </label>
-                    <div className="flex items-center justify-between md:order-3 md:justify-end">
-                      <div className="flex items-center">
-                        <button
-                          type="button"
-                          id="decrement-button"
-                          data-input-counter-decrement="counter-input"
-                          className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
-                        >
-                          <RemoveIcon fontSize="small" />
-                        </button>
-                        <input
-                          type="text"
-                          id="counter-input"
-                          data-input-counter=""
-                          className="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0 dark:text-white"
-                          placeholder=""
-                          defaultValue={2}
+            {cart?.orderItems.map((item, index) => (
+              <div className=" relative mb-5" key={index}>
+                <div className="absolute right-0 ">
+                  <button>
+                    <ClearIcon />
+                  </button>
+                </div>
+                <div className="space-y-6 ">
+                  <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6">
+                    <div className="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
+                      <a href="#" className="shrink-0 md:order-1">
+                        <img
+                          className="h-20 w-20 dark:hidden"
+                          src={`/img/products/${item.product.coverImg}`}
+                          alt="imac image"
                         />
-                        <button
-                          type="button"
-                          id="increment-button"
-                          data-input-counter-increment="counter-input"
-                          className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
-                        >
-                          <AddIcon fontSize="small" />
-                        </button>
-                      </div>
-                      <div className="text-end md:order-4 md:w-32">
-                        <p className="text-base font-bold text-gray-900 dark:text-white">
-                          $1,499
-                        </p>
-                      </div>
-                    </div>
-                    <div className="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md">
-                      <a
-                        href="#"
-                        className="text-base font-medium text-gray-900 hover:underline dark:text-white"
-                      >
-                        PC system All in One APPLE iMac (2023) mqrq3ro/a, Apple
-                        M3, 24" Retina 4.5K, 8GB, SSD 256GB, 10-core GPU,
-                        Keyboard layout INT
                       </a>
+                      <div className="flex items-center justify-between md:order-3 md:justify-end">
+                        <div className="flex items-center">
+                          <button
+                            type="button"
+                            id="decrement-button"
+                            data-input-counter-decrement="counter-input"
+                            className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
+                          >
+                            <RemoveIcon fontSize="small" />
+                          </button>
+                          <input
+                            type="text"
+                            id="counter-input"
+                            data-input-counter=""
+                            className="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0 dark:text-white"
+                            placeholder=""
+                            defaultValue={item.quantity}
+                          />
+                          <button
+                            type="button"
+                            id="increment-button"
+                            data-input-counter-increment="counter-input"
+                            className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
+                          >
+                            <AddIcon fontSize="small" />
+                          </button>
+                        </div>
+                        <div className="text-end md:order-4 md:w-32">
+                          <p className="text-base font-bold text-gray-900 dark:text-white">
+                            ${item.price * item.quantity}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md">
+                        <a className=" block text-base font-medium text-gray-900 hover:underline dark:text-white">
+                          {item.product.name} {item.product.monitor}{' '}
+                          {item.product.version}
+                        </a>
+
+                        <span className="text-base font-medium text-gray-900 hover:underline dark:text-white">
+                          Black
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div className=" relative mb-5">
-              <div className="absolute right-0 ">
-                <button>
-                  <ClearIcon />
-                </button>
-              </div>
-              <div className="space-y-6 ">
-                <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6">
-                  <div className="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
-                    <a href="#" className="shrink-0 md:order-1">
-                      <img
-                        className="h-20 w-20 dark:hidden"
-                        src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front.svg"
-                        alt="imac image"
-                      />
-                      <img
-                        className="hidden h-20 w-20 dark:block"
-                        src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg"
-                        alt="imac image"
-                      />
-                    </a>
-                    <label htmlFor="counter-input" className="sr-only">
-                      Choose quantity:
-                    </label>
-                    <div className="flex items-center justify-between md:order-3 md:justify-end">
-                      <div className="flex items-center">
-                        <button
-                          type="button"
-                          id="decrement-button"
-                          data-input-counter-decrement="counter-input"
-                          className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
-                        >
-                          <RemoveIcon fontSize="small" />
-                        </button>
-                        <input
-                          type="text"
-                          id="counter-input"
-                          data-input-counter=""
-                          className="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0 dark:text-white"
-                          placeholder=""
-                          defaultValue={2}
-                        />
-                        <button
-                          type="button"
-                          id="increment-button"
-                          data-input-counter-increment="counter-input"
-                          className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
-                        >
-                          <AddIcon fontSize="small" />
-                        </button>
-                      </div>
-                      <div className="text-end md:order-4 md:w-32">
-                        <p className="text-base font-bold text-gray-900 dark:text-white">
-                          $1,499
-                        </p>
-                      </div>
-                    </div>
-                    <div className="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md">
-                      <a
-                        href="#"
-                        className="text-base font-medium text-gray-900 hover:underline dark:text-white"
-                      >
-                        PC system All in One APPLE iMac (2023) mqrq3ro/a, Apple
-                        M3, 24" Retina 4.5K, 8GB, SSD 256GB, 10-core GPU,
-                        Keyboard layout INT
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className=" relative mb-5">
-              <div className="absolute right-0 ">
-                <button>
-                  <ClearIcon />
-                </button>
-              </div>
-              <div className="space-y-6 ">
-                <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6">
-                  <div className="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
-                    <a href="#" className="shrink-0 md:order-1">
-                      <img
-                        className="h-20 w-20 dark:hidden"
-                        src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front.svg"
-                        alt="imac image"
-                      />
-                      <img
-                        className="hidden h-20 w-20 dark:block"
-                        src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg"
-                        alt="imac image"
-                      />
-                    </a>
-                    <label htmlFor="counter-input" className="sr-only">
-                      Choose quantity:
-                    </label>
-                    <div className="flex items-center justify-between md:order-3 md:justify-end">
-                      <div className="flex items-center">
-                        <button
-                          type="button"
-                          id="decrement-button"
-                          data-input-counter-decrement="counter-input"
-                          className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
-                        >
-                          <RemoveIcon fontSize="small" />
-                        </button>
-                        <input
-                          type="text"
-                          id="counter-input"
-                          data-input-counter=""
-                          className="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0 dark:text-white"
-                          placeholder=""
-                          defaultValue={2}
-                        />
-                        <button
-                          type="button"
-                          id="increment-button"
-                          data-input-counter-increment="counter-input"
-                          className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
-                        >
-                          <AddIcon fontSize="small" />
-                        </button>
-                      </div>
-                      <div className="text-end md:order-4 md:w-32">
-                        <p className="text-base font-bold text-gray-900 dark:text-white">
-                          $1,499
-                        </p>
-                      </div>
-                    </div>
-                    <div className="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md">
-                      <a
-                        href="#"
-                        className="text-base font-medium text-gray-900 hover:underline dark:text-white"
-                      >
-                        PC system All in One APPLE iMac (2023) mqrq3ro/a, Apple
-                        M3, 24" Retina 4.5K, 8GB, SSD 256GB, 10-core GPU,
-                        Keyboard layout INT
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
           <div className="mx-auto mt-6 max-w-4xl flex-1 space-y-6 lg:mt-0 lg:w-full">
             <Box

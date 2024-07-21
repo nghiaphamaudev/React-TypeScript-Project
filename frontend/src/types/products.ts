@@ -5,8 +5,8 @@ export interface Products {
   price: number;
   ratingsAverage: number | undefined;
   ratingsQuantity: number | undefined;
-  coverImg: string | File;
-  images: File[] | [string];
+  coverImg: string;
+  images: [string];
   priceDiscount: number;
   version: number;
   summary: string;

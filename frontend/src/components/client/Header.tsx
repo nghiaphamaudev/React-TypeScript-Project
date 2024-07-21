@@ -1,13 +1,29 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+
+import Badge, { BadgeProps } from '@mui/material/Badge';
+import { styled } from '@mui/material/styles';
+import IconButton from '@mui/material/IconButton';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import AccountMenu from '../admin/avatar/Avatar';
-import CustomizedBadges from './Badge/ShoppingCartBadge';
+
+import { useCart } from 'src/contexts/StateCart';
+const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    right: -3,
+    top: 13,
+    border: `2px solid ${theme.palette.background.paper}`,
+    padding: '0 4px',
+  },
+}));
 
 const Header = () => {
   const [activate, setActivate] = useState('home');
+  const { cart } = useCart();
 
+  const itemCount = cart ? cart.orderItems.length : 0;
   function hanleClick(title: string) {
     setActivate(() => title);
   }
@@ -133,7 +149,14 @@ const Header = () => {
                 onClick={() => hanleClick('shopping-cart')}
               >
                 <span className="absolute -inset-1.5" />
-                <CustomizedBadges />
+                <IconButton aria-label="cart">
+                  <StyledBadge badgeContent={itemCount} color="secondary">
+                    <ShoppingCartIcon
+                      fontSize="large"
+                      sx={{ color: '#cbd5e1' }}
+                    />
+                  </StyledBadge>
+                </IconButton>
               </Link>
               <button
                 type="button"
