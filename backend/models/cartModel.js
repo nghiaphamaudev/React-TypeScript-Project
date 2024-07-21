@@ -7,18 +7,14 @@ const cartSchema = new mongoose.Schema(
       required: [true, 'The cart must have a user id!'],
       ref: 'User',
     },
-    items: [
+    orderItems: [
       {
+        quantity: { type: Number, required: true },
+        price: { type: Number, require: true },
         product: {
-          type: mongoose.Schema.ObjectId,
-          ref: 'Laptop', // Tham chiếu đến mô hình được xác định bởi `productType`
-        },
-        quantity: {
-          type: Number,
-          min: 1,
-        },
-        price: {
-          type: Number,
+          type: mongoose.Schema.Types.ObjectId,
+          required: true,
+          ref: 'Laptop',
         },
       },
     ],

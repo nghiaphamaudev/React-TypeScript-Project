@@ -1,22 +1,17 @@
 const express = require('express');
 const cartController = require('./../controllers/cartController');
 const authController = require('./../controllers/authController');
-const cartRouter = express.Router();
+const cartRouter = express.Router({ mergeParams: true });
 
-cartRouter.use(authController.protect);
+cartRouter.use(authController.protect, authController.restrictTo('user'));
 
 cartRouter
   .route('/')
-  .get(authController.restrictTo('user'), cartController.getAllCartByIdUser);
-//   .delete(authController.restrictTo('user'), cartController.clearCart);
+  .get(cartController.getAllCartByUser)
+  .post(cartController.getCartMiddleware, cartController.addToCart);
 
 cartRouter
-  .route('/items')
-  .post(authController.restrictTo('user'), cartController.addItemToCart);
-
-// cartRouter
-//   .route('/items/:itemId')
-//   .patch(authController.restrictTo('user'), cartController.updateCartItem)
-//   .delete(authController.restrictTo('user'), cartController.removeItemFromCart);
+  .route('/:id')
+  .delete(cartController.getCartMiddleware, cartController.deleteProductCart);
 
 module.exports = cartRouter;
