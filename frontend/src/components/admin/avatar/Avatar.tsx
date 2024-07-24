@@ -16,11 +16,8 @@ import Logout from '@mui/icons-material/Logout';
 import { Link, useNavigate } from 'react-router-dom';
 import axiosInstance from 'src/config/axiosConfig';
 import { useSnackbar } from 'src/contexts/Snackbar';
-
-type AccountMenuProps = {
-  explain: string;
-  source: string;
-};
+import { useUser } from 'src/contexts/AuthContext';
+import { useCart } from 'src/contexts/StateCart';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -57,8 +54,15 @@ const SmallAvatar = styled(Avatar)(({ theme }) => ({
   border: `2px solid ${theme.palette.background.paper}`,
 }));
 
-export default function AccountMenu({ explain, source }: AccountMenuProps) {
+type AccountMenuProp = {
+  photo: string;
+  username: string;
+};
+
+export default function AccountMenu({ photo, username }: AccountMenuProp) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const { setUser } = useUser();
+  const { setCart } = useCart();
   const { showSnackbar } = useSnackbar();
   const navigate = useNavigate();
   const open = Boolean(anchorEl);
@@ -71,6 +75,10 @@ export default function AccountMenu({ explain, source }: AccountMenuProps) {
   const hanleLogout = async () => {
     try {
       await axiosInstance.get('/users/logout');
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('user');
+      setUser(null);
+      setCart(null);
       showSnackbar('success', 'Logout is successfully!');
     } catch (error: any) {
       showSnackbar('error', error.response.data.message);
@@ -97,7 +105,7 @@ export default function AccountMenu({ explain, source }: AccountMenuProps) {
               anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
               variant="dot"
             >
-              <Avatar alt={explain} src={source} />
+              <Avatar alt={username} src={`/img/users/${photo}`} />
             </StyledBadge>
           </IconButton>
         </Tooltip>
@@ -138,7 +146,8 @@ export default function AccountMenu({ explain, source }: AccountMenuProps) {
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
         <MenuItem onClick={handleClose}>
-          <Avatar alt={explain} src={source} /> My Account
+          <Avatar alt={username} src={`/img/users/${photo}`} />
+          {username}
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleClose}>

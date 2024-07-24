@@ -1,15 +1,19 @@
-import { useState } from 'react';
+// src/components/Header.tsx
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import Badge, { BadgeProps } from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-
+import LoginIcon from '@mui/icons-material/Login';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import AccountMenu from '../admin/avatar/Avatar';
 
 import { useCart } from 'src/contexts/StateCart';
+import { useUser } from 'src/contexts/AuthContext';
+import axiosInstance from 'src/config/axiosConfig';
+
 const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
   '& .MuiBadge-badge': {
     right: -3,
@@ -21,10 +25,40 @@ const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
 
 const Header = () => {
   const [activate, setActivate] = useState('home');
-  const { cart } = useCart();
+  const { cart, setCart } = useCart();
 
-  const itemCount = cart ? cart.orderItems.length : 0;
-  function hanleClick(title: string) {
+  const { user, setUser } = useUser();
+
+  const getCart = async () => {
+    try {
+      const data = await axiosInstance.get('/carts');
+      setCart(data.data.data);
+    } catch (error: any) {
+      return;
+    }
+  };
+  const getUser = async () => {
+    const id = JSON.parse(localStorage.getItem('user') ?? 'null') || null;
+    console.log(id);
+    try {
+      const data = await axiosInstance.get(`/users/${id}`);
+      setUser(data.data.data);
+      console.log(data);
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getCart();
+  }, []);
+
+  useEffect(() => {
+    getUser();
+  }, []);
+
+  const itemCount = cart ? cart.orderItems?.length : 0;
+  function handleClick(title: string) {
     setActivate(() => title);
   }
   return (
@@ -33,7 +67,7 @@ const Header = () => {
         <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
           <div className="relative flex h-16 items-center justify-between">
             <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-              {/* Mobile menu button*/}
+              {/* Mobile menu button */}
               <button
                 type="button"
                 className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
@@ -42,11 +76,6 @@ const Header = () => {
               >
                 <span className="absolute -inset-0.5" />
                 <span className="sr-only">Open main menu</span>
-                {/*
-      Icon when menu is closed.
-
-      Menu open: "hidden", Menu closed: "block"
-    */}
                 <svg
                   className="block h-6 w-6"
                   fill="none"
@@ -61,11 +90,6 @@ const Header = () => {
                     d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
                   />
                 </svg>
-                {/*
-      Icon when menu is open.
-
-      Menu open: "block", Menu closed: "hidden"
-    */}
                 <svg
                   className="hidden h-6 w-6"
                   fill="none"
@@ -92,7 +116,6 @@ const Header = () => {
               </div>
               <div className="hidden sm:ml-6 sm:block">
                 <div className="flex space-x-4">
-                  {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
                   <Link
                     to="/"
                     className={
@@ -100,7 +123,7 @@ const Header = () => {
                         ? 'bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium'
                         : 'text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium'
                     }
-                    onClick={() => hanleClick('home')}
+                    onClick={() => handleClick('home')}
                   >
                     Home
                   </Link>
@@ -111,7 +134,7 @@ const Header = () => {
                         ? 'bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium'
                         : 'text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium'
                     }
-                    onClick={() => hanleClick('about')}
+                    onClick={() => handleClick('about')}
                   >
                     About
                   </Link>
@@ -123,19 +146,19 @@ const Header = () => {
                         ? 'bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium'
                         : 'text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium'
                     }
-                    onClick={() => hanleClick('product')}
+                    onClick={() => handleClick('product')}
                   >
                     Product
                   </Link>
 
                   <Link
-                    to=""
+                    to="/contact"
                     className={
                       activate === 'contact'
                         ? 'bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium'
                         : 'text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium'
                     }
-                    onClick={() => hanleClick('contact')}
+                    onClick={() => handleClick('contact')}
                   >
                     Contact
                   </Link>
@@ -146,7 +169,7 @@ const Header = () => {
               <Link
                 to="/shopping-cart"
                 className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 mr-5"
-                onClick={() => hanleClick('shopping-cart')}
+                onClick={() => handleClick('shopping-cart')}
               >
                 <span className="absolute -inset-1.5" />
                 <IconButton aria-label="cart">
@@ -158,25 +181,33 @@ const Header = () => {
                   </StyledBadge>
                 </IconButton>
               </Link>
-              <button
-                type="button"
-                className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 mr-5"
-              >
+              <div className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 mr-5">
                 <span className="absolute -inset-1.5" />
                 <span className="sr-only">View notifications</span>
-                <NotificationsNoneIcon sx={{ fontSize: 26 }} />
-              </button>
-              {/* Profile dropdown */}
+                <IconButton aria-label="cart">
+                  <StyledBadge badgeContent={itemCount} color="secondary">
+                    <NotificationsNoneIcon
+                      fontSize="large"
+                      sx={{ color: '#cbd5e1' }}
+                    />
+                  </StyledBadge>
+                </IconButton>
+              </div>
+
               <div className="relative ml-3">
-                <AccountMenu
-                  explain="Pham Nghia Jr"
-                  source="https://img.freepik.com/free-photo/pretty-young-woman-happy-surprised-expression-city-background_1194-588814.jpg?t=st=1720433764~exp=1720437364~hmac=896edbc5b2bd08bb1ae8bc94eafcdce02a540aed5d59201d964a58a9971f3dd1&w=1380"
-                />
+                {user ? (
+                  <AccountMenu username={user.username} photo={user.photo} />
+                ) : (
+                  <Link to={'/login'}>
+                    <IconButton aria-label="cart">
+                      <LoginIcon fontSize="large" sx={{ color: '#cbd5e1' }} />
+                    </IconButton>
+                  </Link>
+                )}
               </div>
             </div>
           </div>
         </div>
-        {/* Mobile menu, show/hide based on menu state. */}
         <div className="sm:hidden" id="mobile-menu">
           <div className="space-y-1 px-2 pb-3 pt-2">
             <a

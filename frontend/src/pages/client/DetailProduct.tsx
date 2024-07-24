@@ -66,9 +66,8 @@ const DetailProduct = () => {
     };
     try {
       const response = await axiosInstance.post('/carts', data);
-
       showSnackbar('success', 'Add to cart is successfully!');
-      setCart(response.data);
+      setCart(response.data.data);
     } catch (error: any) {
       showSnackbar('error', error.response.data.message);
     }

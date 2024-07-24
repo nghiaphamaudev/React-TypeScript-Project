@@ -88,7 +88,14 @@ exports.deleteProductCart = catchAsync(async (req, res, next) => {
     currentCart._id,
     { orderItems: newCart },
     { new: true }
-  );
+  ).populate({
+    path: 'orderItems',
+    populate: {
+      path: 'product',
+      model: Laptop,
+      select: '_id name monitor coverImg version ratingsAverage ',
+    },
+  });
 
   return res.status(200).json({
     status: 'success',

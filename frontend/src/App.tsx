@@ -1,10 +1,9 @@
 import './App.css';
-
-import { Navigate, useRoutes } from 'react-router-dom';
+import { Navigate, useRoutes, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import ClientLayout from './layouts/ClientLayout';
 import HomePage from './pages/client/HomePage';
 import DetailProduct from './pages/client/DetailProduct';
-
 import AllProduct from './pages/client/AllProduct';
 import PageNotFound from './pages/client/PageNotFound';
 import Login from './pages/client/Login';
@@ -14,14 +13,14 @@ import Checkout from './components/client/Checkout';
 import Payment from './components/client/Payment';
 import ShoppingLayout from './layouts/ShoppingLayout';
 import AdminLayout from './layouts/AdminLayout';
-
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import { SnackbarProvider } from './contexts/Snackbar';
-import { LinearLoadingProvider } from './contexts/Progress';
 import ListProduct from './components/admin/ListProduct';
 import ShoppingCart from './components/client/ShoppingCart';
 import { CartProvider } from './contexts/StateCart';
+import { AuthProvider } from './contexts/AuthContext';
+import { SnackbarProvider } from './contexts/Snackbar';
+import { LinearLoadingProvider } from './contexts/Progress';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 
 const theme = createTheme({
   typography: {
@@ -64,18 +63,33 @@ const routerConfig = [
   },
 ];
 
-function App() {
+const App = () => {
+  const location = useLocation();
   const routes = useRoutes(routerConfig);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <SnackbarProvider>
-        <LinearLoadingProvider>
-          <main>{routes}</main>
-        </LinearLoadingProvider>
-      </SnackbarProvider>
+      <AuthProvider>
+        <SnackbarProvider>
+          <LinearLoadingProvider>
+            {/* <AnimatePresence>
+              <motion.div
+                key={location.pathname}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                {routes}
+              </motion.div>
+            </AnimatePresence> */}
+            {routes}
+          </LinearLoadingProvider>
+        </SnackbarProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
-}
+};
 
 export default App;
