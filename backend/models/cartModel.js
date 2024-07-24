@@ -10,7 +10,7 @@ const cartSchema = new mongoose.Schema(
     orderItems: [
       {
         quantity: { type: Number, required: true },
-        price: { type: Number, require: true },
+        price: { type: Number, required: true },
         product: {
           type: mongoose.Schema.Types.ObjectId,
           required: true,
@@ -26,6 +26,13 @@ const cartSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+cartSchema.virtual('totalPrice').get(function () {
+  return this.orderItems.reduce(
+    (total, item) => total + item.quantity * item.price,
+    0
+  );
+});
 
 const Cart = mongoose.model('Cart', cartSchema);
 module.exports = Cart;

@@ -1,6 +1,7 @@
 export interface Cart {
   _id: string;
   user: string;
+  totalPrice?: number;
   orderItems: [
     {
       product: {

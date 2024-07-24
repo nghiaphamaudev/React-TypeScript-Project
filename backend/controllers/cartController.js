@@ -16,7 +16,7 @@ exports.getAllCartByUser = catchAsync(async (req, res, next) => {
     populate: {
       path: 'product',
       model: Laptop,
-      select: '_id name monitor coverImg version ratingsAverage ',
+      select: '_id name monitor coverImg version ratingsAverage price ',
     },
   });
   return res.status(200).json({
@@ -93,7 +93,7 @@ exports.deleteProductCart = catchAsync(async (req, res, next) => {
     populate: {
       path: 'product',
       model: Laptop,
-      select: '_id name monitor coverImg version ratingsAverage ',
+      select: '_id name monitor coverImg version ratingsAverage price ',
     },
   });
 

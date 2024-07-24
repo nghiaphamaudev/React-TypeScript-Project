@@ -1,6 +1,4 @@
-import RemoveIcon from '@mui/icons-material/Remove';
-import AddIcon from '@mui/icons-material/Add';
-import ClearIcon from '@mui/icons-material/Clear';
+import DeleteIcon from '@mui/icons-material/Delete';
 import {
   Box,
   Typography,
@@ -9,7 +7,16 @@ import {
   Link,
   TextField,
   IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Input,
 } from '@mui/material';
+
 import { East as EastIcon } from '@mui/icons-material';
 import { blue, green } from '@mui/material/colors';
 import { useState, useEffect } from 'react';
@@ -58,76 +65,85 @@ const ShoppingCart = () => {
   return (
     <div>
       <div className="">
-        {carts ? (
+        {carts?.orderItems.length || 0 > 0 ? (
           <div className="mt-6 sm:mt-8 p-6 shadow-xl  bg-slate-50 rounded md:gap-6 lg:flex lg:items-start xl:gap-8">
             <div className="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
-              {carts?.orderItems.map((item, index) => (
-                <div className=" relative mb-5" key={index}>
-                  <div className="absolute right-0 ">
-                    <IconButton
-                      onClick={() => handleDeleteProduct(item.product.id)}
-                    >
-                      <ClearIcon />
-                    </IconButton>
+              <div className="grid lg:grid-cols-2">
+                <div className="lg:col-span-2 p-6 bg-white overflow-x-auto rounded-lg shadow-lg">
+                  <div className="flex gap-2 border-b pb-4">
+                    <h2 className="text-2xl font-bold text-gray-800 flex-1">
+                      Shopping Cart
+                    </h2>
+                    <h3 className="text-base text-gray-800">
+                      {carts?.orderItems.length} Items
+                    </h3>
                   </div>
-                  <div className="space-y-6 ">
-                    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6">
-                      <div className="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
-                        <a href="#" className="shrink-0 md:order-1">
-                          <img
-                            className="h-20 w-20 dark:hidden"
-                            src={`/img/products/${item.product.coverImg}`}
-                            alt="imac image"
-                          />
-                        </a>
-                        <div className="flex items-center justify-between md:order-3 md:justify-end">
-                          <div className="flex items-center">
-                            <button
-                              type="button"
-                              id="decrement-button"
-                              data-input-counter-decrement="counter-input"
-                              className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
-                            >
-                              <RemoveIcon fontSize="small" />
-                            </button>
-                            <input
-                              type="text"
-                              id="counter-input"
-                              data-input-counter=""
-                              className="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0 dark:text-white"
-                              placeholder=""
-                              defaultValue={item.quantity}
-                            />
-                            <button
-                              type="button"
-                              id="increment-button"
-                              data-input-counter-increment="counter-input"
-                              className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
-                            >
-                              <AddIcon fontSize="small" />
-                            </button>
-                          </div>
-                          <div className="text-end md:order-4 md:w-32">
-                            <p className="text-base font-bold text-gray-900 dark:text-white">
-                              ${item.price * item.quantity}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md">
-                          <a className=" block text-base font-medium text-gray-900 hover:underline dark:text-white">
-                            {item.product.name} {item.product.monitor}{' '}
-                            {item.product.version}
-                          </a>
+                  <table className="mt-6 w-full border-collapse divide-y">
+                    <thead className="whitespace-nowrap text-left">
+                      <tr>
+                        <th className="text-base p-4"></th>
+                        <th className="text-base p-4 font-semibold">Product</th>
+                        <th className="text-base p-4  font-semibold">
+                          Quantity
+                        </th>
+                        <th className="text-base text-gray-800 p-4 text-center font-semibold">
+                          Subtotal
+                        </th>
+                        <th className="text-base text-gray-800 p-4"></th>
+                      </tr>
+                    </thead>
+                    <tbody className="whitespace-nowrap divide-y">
+                      {carts?.orderItems.map((item, index) => (
+                        <tr key={index}>
+                          <td className="py-4 text-center">
+                            <div className="h-24 shrink-0">
+                              <img
+                                src={`/img/products/${item.product.coverImg}`}
+                                className="w-full h-full object-contain rounded-lg"
+                              />
+                            </div>
+                          </td>
+                          <td className="ml-2 pt-4">
+                            <div className="flex items-center gap-4 w-max">
+                              <div>
+                                <p className="text-base text-center font-normal text-gray-800">
+                                  {item.product.name}
+                                </p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="p-4">
+                            <div className="flex items-center justify-center border w-16 rounded-lg overflow-hidden">
+                              <input
+                                type="number"
+                                id="number-input"
+                                aria-describedby="helper-text-explanation"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm text-center rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                defaultValue={item.quantity}
+                              />
+                            </div>
+                          </td>
 
-                          <span className="text-base font-medium text-gray-900 hover:underline dark:text-white">
-                            Black
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                          <td className="p-4 text-center">
+                            <h4 className="text-base font-normal text-gray-800">
+                              ${item.price}
+                            </h4>
+                          </td>
+                          <td className="p-4 text-center">
+                            <IconButton
+                              onClick={() =>
+                                handleDeleteProduct(item.product.id)
+                              }
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-              ))}
+              </div>
             </div>
             <div className="mx-auto mt-6 max-w-4xl flex-1 space-y-6 lg:mt-0 lg:w-full">
               <Box
@@ -157,7 +173,7 @@ const ShoppingCart = () => {
                       Original price
                     </Typography>
                     <Typography variant="body1" fontWeight="medium">
-                      $7,592.00
+                      ${carts?.totalPrice}
                     </Typography>
                   </Box>
                   <Box
@@ -352,7 +368,7 @@ const ShoppingCart = () => {
 
         <section className="bg-white py-8 antialiased dark:bg-gray-900 md:py-16  mt-10">
           <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white sm:text-2xl">
               People also bought
             </h2>
             <div className="hidden xl:mt-8 xl:block">
