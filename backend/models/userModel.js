@@ -27,6 +27,23 @@ const userSchema = new mongoose.Schema({
     enum: ['admin', 'user', 'guide', 'lead-guide'],
     default: 'user',
   },
+  addresses: [
+    {
+      name: String,
+      phone: String,
+      address: String,
+      isDefault: { type: Boolean, default: false },
+    },
+  ],
+  favoriteProduct: [
+    {
+      product: {
+        type: mongoose.Schema.ObjectId,
+        required: false,
+        ref: 'Laptop',
+      },
+    },
+  ],
   password: {
     type: String,
     minlength: [8, 'Mật khẩu tối thiểu 8 kí tự'],
@@ -57,6 +74,17 @@ userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 12);
   this.passwordConfirm = undefined;
+  next();
+});
+
+//check dia chi isdefault
+userSchema.pre('save', function (next) {
+  if (this.isModified('addresses') && this.addresses.length > 0) {
+    const defaultAddress = this.addresses.find((address) => address.isDefault);
+    if (!defaultAddress) {
+      this.addresses[0].isDefault = true;
+    }
+  }
   next();
 });
 

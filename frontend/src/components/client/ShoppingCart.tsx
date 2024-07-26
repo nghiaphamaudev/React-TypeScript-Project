@@ -83,6 +83,9 @@ const ShoppingCart = () => {
                       <tr>
                         <th className="text-base p-4"></th>
                         <th className="text-base p-4 font-semibold">Product</th>
+                        <th className="text-base p-4  font-semibold text-center">
+                          Price {'   '}
+                        </th>
                         <th className="text-base p-4  font-semibold">
                           Quantity
                         </th>
@@ -112,6 +115,11 @@ const ShoppingCart = () => {
                               </div>
                             </div>
                           </td>
+                          <td className="py-4 px-8 text-center">
+                            <h4 className="text-base font-normal text-gray-800">
+                              ${item.price}
+                            </h4>
+                          </td>
                           <td className="p-4">
                             <div className="flex items-center justify-center border w-16 rounded-lg overflow-hidden">
                               <input
@@ -126,7 +134,7 @@ const ShoppingCart = () => {
 
                           <td className="p-4 text-center">
                             <h4 className="text-base font-normal text-gray-800">
-                              ${item.price}
+                              ${item.price * item.quantity}
                             </h4>
                           </td>
                           <td className="p-4 text-center">
@@ -176,7 +184,7 @@ const ShoppingCart = () => {
                       ${carts?.totalPrice}
                     </Typography>
                   </Box>
-                  <Box
+                  {/* <Box
                     sx={{
                       display: 'flex',
                       justifyContent: 'space-between',
@@ -221,7 +229,7 @@ const ShoppingCart = () => {
                     <Typography variant="body1" fontWeight="medium">
                       $799
                     </Typography>
-                  </Box>
+                  </Box> */}
                   <Divider sx={{ my: 2 }} />
                   <Box
                     sx={{ display: 'flex', justifyContent: 'space-between' }}
@@ -230,7 +238,7 @@ const ShoppingCart = () => {
                       Total
                     </Typography>
                     <Typography variant="body1" fontWeight="bold">
-                      $8,191.00
+                      ${carts?.totalPrice}
                     </Typography>
                   </Box>
                 </Box>

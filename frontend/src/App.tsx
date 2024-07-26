@@ -1,4 +1,5 @@
 import './App.css';
+
 import { Navigate, useRoutes, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import ClientLayout from './layouts/ClientLayout';
@@ -21,12 +22,27 @@ import { SnackbarProvider } from './contexts/Snackbar';
 import { LinearLoadingProvider } from './contexts/Progress';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import ErrorBoundary from './contexts/ErroBoundary';
+import { useEffect, useRef } from 'react';
 
 const theme = createTheme({
   typography: {
     fontFamily: 'Poppins, sans-serif',
   },
 });
+const ScrollToTop = () => {
+  const location = useLocation();
+  const topRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // cuộn lên đầu trang khi location thay đổi
+    if (topRef.current) {
+      topRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [location]);
+
+  return <div ref={topRef} />;
+};
 
 const routerConfig = [
   {
@@ -64,16 +80,17 @@ const routerConfig = [
 ];
 
 const App = () => {
-  const location = useLocation();
   const routes = useRoutes(routerConfig);
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <AuthProvider>
-        <SnackbarProvider>
-          <LinearLoadingProvider>
-            {/* <AnimatePresence>
+      <ScrollToTop />
+      <ErrorBoundary>
+        <AuthProvider>
+          <SnackbarProvider>
+            <LinearLoadingProvider>
+              {/* <AnimatePresence>
               <motion.div
                 key={location.pathname}
                 initial={{ opacity: 0 }}
@@ -84,10 +101,11 @@ const App = () => {
                 {routes}
               </motion.div>
             </AnimatePresence> */}
-            {routes}
-          </LinearLoadingProvider>
-        </SnackbarProvider>
-      </AuthProvider>
+              {routes}
+            </LinearLoadingProvider>
+          </SnackbarProvider>
+        </AuthProvider>
+      </ErrorBoundary>
     </ThemeProvider>
   );
 };

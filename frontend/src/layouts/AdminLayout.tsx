@@ -31,6 +31,8 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
 import StarBorder from '@mui/icons-material/StarBorder';
 import { useSnackbar } from 'src/contexts/Snackbar';
+import { useUser } from 'src/contexts/AuthContext';
+import axiosInstance from 'src/config/axiosConfig';
 const drawerWidth = 240;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
@@ -88,7 +90,23 @@ export default function AdminLayout() {
   const token = localStorage.getItem('accessToken');
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
+
+  const { user, setUser } = useUser();
   const [openMenu, setOpenMenu] = React.useState(false);
+  const getUser = async () => {
+    const id = JSON.parse(localStorage.getItem('user') ?? 'null') || null;
+    console.log(id);
+    try {
+      const data = await axiosInstance.get(`/users/${id}`);
+      setUser(data.data.data);
+      console.log(data);
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getUser();
+  }, []);
 
   useEffect(() => {
     if (!token) {
@@ -181,11 +199,10 @@ export default function AdminLayout() {
                   New Widget
                 </button>
                 <div className="fixed right-10">
-                  {' '}
-                  <AccountMenu
-                    explain="Pham Nghia Jr"
-                    source="https://img.freepik.com/free-photo/happy-proud-pleased-asian-male-clap-hands-cheerful-surprised-guy-applausing-congratulating-with-achievement-praising-great-work-saying-well-done-coworker-white-background_1258-55338.jpg?t=st=1720280350~exp=1720283950~hmac=ee20aff309bc0f530a13c81854b3f76a3da9dd8bf41c111567af22e964e8dba2&w=1380"
-                  />
+                  {/* {' '}
+                  <AccountMenu photo={user?.photo} username={user?.username}
+                   
+                  /> */}
                 </div>
               </div>
             </div>

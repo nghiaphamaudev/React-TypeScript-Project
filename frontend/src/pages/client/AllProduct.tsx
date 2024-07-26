@@ -29,6 +29,8 @@ const AllProduct = () => {
     try {
       const { data } = await axiosInstance.get('/laptops');
       setProducts(() => data.data);
+      console.log(data);
+      localStorage.setItem('product', JSON.stringify(data.data));
     } catch (error: any) {
       //Khi ko co internet
       if (error.code === 'ERR_NETWORK') {

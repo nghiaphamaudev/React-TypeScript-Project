@@ -11,14 +11,19 @@ exports.getCartMiddleware = catchAsync(async (req, res, next) => {
 });
 
 exports.getAllCartByUser = catchAsync(async (req, res, next) => {
-  const cart = await Cart.findOne({ user: req.user._id }).populate({
-    path: 'orderItems',
-    populate: {
-      path: 'product',
-      model: Laptop,
-      select: '_id name monitor coverImg version ratingsAverage price ',
-    },
-  });
+  const cart = await Cart.findOne({ user: req.user._id })
+    .populate({
+      path: 'orderItems',
+      populate: {
+        path: 'product',
+        model: Laptop,
+        select: '_id name monitor coverImg version ratingsAverage price ',
+      },
+    })
+    .populate({
+      path: 'user',
+      select: '_id email username fullName addresses', // các trường bạn muốn lấy từ user
+    });
   return res.status(200).json({
     status: 'success',
     data: cart,

@@ -7,21 +7,10 @@ const OrderSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'User',
     },
-    address: {
-      type: String,
-      required: true,
-    },
-    phone: {
-      type: String,
-      required: true,
-    },
-    name: {
-      type: String,
-      required: true,
-    },
+
     payment: {
       type: String,
-      enum: ['COD', 'BANK'],
+      enum: ['COD', 'PAYPAL', 'CREDIT'],
       default: 'COD',
     },
     products: [
@@ -31,6 +20,10 @@ const OrderSchema = new Schema(
           ref: 'Product',
         },
         quantity: {
+          type: Number,
+          required: true,
+        },
+        price: {
           type: Number,
           required: true,
         },

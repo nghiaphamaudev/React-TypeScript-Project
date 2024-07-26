@@ -1,4 +1,101 @@
+import TransitionsModal from '../admin/Modal';
+import * as React from 'react';
+import Box from '@mui/material/Box';
+import Modal from '@mui/material/Modal';
+import Button from '@mui/material/Button';
+import AddProduct from '../admin/AddProduct';
+import AddIcon from '@mui/icons-material/Add';
+import { useState, useEffect } from 'react';
+import { Address } from 'src/types/users';
+import axiosInstance from 'src/config/axiosConfig';
+import { Cart } from 'src/types/cart';
+import blue from '@mui/material/colors/blue';
+import grey from '@mui/material/colors/grey';
+import { IconButton, Typography } from '@mui/material';
+import { CheckBox } from '@mui/icons-material';
+import MyButton from './buttons/MyButton';
+const style = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  pt: 2,
+  px: 4,
+  pb: 3,
+};
+function ChildModal() {
+  const [openChild, setOpenChild] = React.useState(false);
+  const handleOpenChild = () => {
+    setOpenChild(true);
+  };
+  const handleCloseChild = () => {
+    setOpenChild(false);
+  };
+
+  return (
+    <React.Fragment>
+      <Button onClick={handleOpenChild}>Open Child Modal</Button>
+      <Modal
+        open={openChild}
+        onClose={handleCloseChild}
+        aria-labelledby="child-modal-title"
+        aria-describedby="child-modal-description"
+      >
+        <Box sx={{ ...style, width: 700 }}>
+          <h2 id="child-modal-title">Text in a child modal</h2>
+          <p id="child-modal-description">
+            Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+          </p>
+          <Button onClick={handleCloseChild}>Close Child Modal</Button>
+        </Box>
+      </Modal>
+    </React.Fragment>
+  );
+}
 const SummaryOrder = () => {
+  const [open, setOpen] = React.useState(false);
+  const [openChild, setOpenChild] = React.useState(false);
+  const handleOpenChild = () => {
+    setOpenChild(true);
+  };
+  const handleCloseChild = () => {
+    setOpenChild(false);
+  };
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [carts, setCarts] = useState<Cart | undefined>();
+  const getAddress = async () => {
+    try {
+      const { data } = await axiosInstance.get('/carts');
+      setAddresses(data.data.user.addresses);
+      setCarts(data.data);
+      if (data.data.user.addresses.length < 0) setOpen(true);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const addressDefault = addresses.find(
+    (address) => address.isDefault === true
+  );
+
+  useEffect(() => {
+    getAddress();
+  }, []);
+
+  console.log(addresses);
+  // useEffect(() => {
+  //   if (addresses.length < 0) return setOpen(true);
+  // }, [addresses]);
+
   return (
     <div>
       <>
@@ -15,237 +112,219 @@ const SummaryOrder = () => {
                 Billing &amp; Delivery information
               </h4>
               <dl>
-                <dt className="text-base font-medium text-gray-900 dark:text-white">
-                  Individual
-                </dt>
                 <dd className="mt-1 text-base font-normal text-gray-500 dark:text-gray-400">
-                  Bonnie Green - +1 234 567 890, San Francisco, California,
-                  United States, 3454, Scott Street
+                  {addressDefault?.name}
+                </dd>
+                <dd className="mt-1 text-base font-normal text-gray-500 dark:text-gray-400">
+                  {addressDefault?.phone}
+                </dd>
+                <dd className="mt-1 text-base font-normal text-gray-500 dark:text-gray-400">
+                  {addressDefault?.address}
                 </dd>
               </dl>
-              <button
-                type="button"
-                data-modal-target="billingInformationModal"
-                data-modal-toggle="billingInformationModal"
-                className="text-base font-medium text-blue-700 hover:underline dark:text-blue-500"
+              <Button
+                onClick={handleOpen}
+                sx={{
+                  backgroundColor: blue[700],
+                  color: grey[50],
+                  '&:hover': {
+                    backgroundColor: blue[800], // màu khi hover đậm hơn
+                  },
+                }}
               >
-                Edit
-              </button>
+                Change
+              </Button>
+              <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="parent-modal-title"
+                aria-describedby="parent-modal-description"
+              >
+                <Box sx={{ ...style, width: 700 }}>
+                  <Box sx={{ borderBottom: '1px solid #ddd', py: 2 }}>
+                    <Typography variant="h6" sx={{ fontVariant: 'normal' }}>
+                      My addresses
+                    </Typography>
+                  </Box>
+                  {addresses.map((address, index) => (
+                    <Box
+                      key={index}
+                      sx={{
+                        borderBottom: '1px solid #ddd',
+                        pt: 1,
+                        pb: 1,
+                        mt: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <Box sx={{ mr: 3 }}>
+                        <CheckBox />
+                      </Box>
+                      <Box sx={{ flexGrow: 1 }}>
+                        <Box
+                          sx={{
+                            display: 'flex', // dùng flex để căn chỉnh các phần tử con
+                            justifyContent: 'space-between', // căn chỉnh các phần tử con để chúng nằm ở hai đầu
+                            alignItems: 'center', // căn chỉnh các phần tử con theo chiều dọc
+                          }}
+                        >
+                          <Typography>
+                            {address.name} | (+84){address.phone}
+                          </Typography>
+                          <Button>Update</Button>
+                        </Box>
+                        <Box sx={{ maxWidth: '400px' }}>
+                          <Typography>{address.address}</Typography>
+                        </Box>
+                        <Box
+                          sx={{
+                            p: 0.5,
+                            mt: 2,
+                            border: '1px solid #ddd',
+                            borderColor: '#e65100',
+                            width: '80px',
+                            textAlign: 'center',
+                            color: '#e65100',
+                          }}
+                        >
+                          <Typography>Default</Typography>
+                        </Box>
+                      </Box>
+                    </Box>
+                  ))}
+
+                  <Button
+                    startIcon={<AddIcon />}
+                    onClick={handleOpenChild}
+                    sx={{
+                      backgroundColor: 'white', // màu nền trắng
+                      color: blue[700], // màu chữ xanh
+                      '&:hover': {
+                        backgroundColor: grey[100], // màu nền khi hover
+                        color: blue[800], // màu chữ khi hover
+                      },
+                      border: `1px solid ${blue[700]}`,
+                      mt: 4, // thêm border xanh nếu cần
+                    }}
+                  >
+                    Add new address
+                  </Button>
+                </Box>
+              </Modal>
+
+              <React.Fragment>
+                <Modal
+                  open={openChild}
+                  onClose={handleCloseChild}
+                  aria-labelledby="child-modal-title"
+                  aria-describedby="child-modal-description"
+                >
+                  <Box sx={{ ...style, width: 700 }}>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <div>
+                        <label
+                          htmlFor="your_name"
+                          className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          {' '}
+                          Your name{' '}
+                        </label>
+                        <input
+                          type="text"
+                          id="your_name"
+                          className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                          placeholder="Bonnie Green"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="your_email"
+                          className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          {' '}
+                          Your email*{' '}
+                        </label>
+                        <input
+                          type="email"
+                          id="your_email"
+                          className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                          placeholder="name@flowbite.com"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="your_email"
+                          className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          {' '}
+                          Your email*{' '}
+                        </label>
+                        <input
+                          type="email"
+                          id="your_email"
+                          className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                          placeholder="name@flowbite.com"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="your_email"
+                          className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Your email*
+                        </label>
+                        <input
+                          type="email"
+                          id="your_email"
+                          className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                          placeholder="name@flowbite.com"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <MyButton
+                          symbol={<AddIcon />}
+                          title="Add new address"
+                        />
+                      </div>
+                    </div>
+                    <Button onClick={handleCloseChild}>Back</Button>
+                  </Box>
+                </Modal>
+              </React.Fragment>
             </div>
             <div className="mt-6 sm:mt-8">
               <div className="relative overflow-x-auto border-b border-gray-200 dark:border-gray-800">
                 <table className="w-full text-left font-medium text-gray-900 dark:text-white md:table-fixed">
                   <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
-                    <tr>
-                      <td className="whitespace-nowrap py-4 md:w-[384px]">
-                        <div className="flex items-center gap-4">
-                          <a
-                            href="#"
-                            className="flex items-center aspect-square w-10 h-10 shrink-0"
-                          >
-                            <img
-                              className="h-auto w-full max-h-full dark:hidden"
-                              src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front.svg"
-                              alt="imac image"
-                            />
-                            <img
-                              className="hidden h-auto w-full max-h-full dark:block"
-                              src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg"
-                              alt="imac image"
-                            />
-                          </a>
-                          <a href="#" className="hover:underline">
-                            Apple iMac 27”
-                          </a>
-                        </div>
-                      </td>
-                      <td className="p-4 text-base font-normal text-gray-900 dark:text-white">
-                        x1
-                      </td>
-                      <td className="p-4 text-right text-base font-bold text-gray-900 dark:text-white">
-                        $1,499
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="whitespace-nowrap py-4 md:w-[384px]">
-                        <div className="flex items-center gap-4">
-                          <a
-                            href="#"
-                            className="flex items-center aspect-square w-10 h-10 shrink-0"
-                          >
-                            <img
-                              className="h-auto w-full max-h-full dark:hidden"
-                              src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/iphone-light.svg"
-                              alt="imac image"
-                            />
-                            <img
-                              className="hidden h-auto w-full max-h-full dark:block"
-                              src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/iphone-dark.svg"
-                              alt="imac image"
-                            />
-                          </a>
-                          <a href="#" className="hover:underline">
-                            Apple iPhone 14
-                          </a>
-                        </div>
-                      </td>
-                      <td className="p-4 text-base font-normal text-gray-900 dark:text-white">
-                        x2
-                      </td>
-                      <td className="p-4 text-right text-base font-bold text-gray-900 dark:text-white">
-                        $1,998
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="whitespace-nowrap py-4 md:w-[384px]">
-                        <div className="flex items-center gap-4">
-                          <a
-                            href="#"
-                            className="flex items-center aspect-square w-10 h-10 shrink-0"
-                          >
-                            <img
-                              className="h-auto w-full max-h-full dark:hidden"
-                              src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/ipad-light.svg"
-                              alt="ipad image"
-                            />
-                            <img
-                              className="hidden h-auto w-full max-h-full dark:block"
-                              src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/ipad-dark.svg"
-                              alt="ipad image"
-                            />
-                          </a>
-                          <a href="#" className="hover:underline">
-                            Apple iPad Air
-                          </a>
-                        </div>
-                      </td>
-                      <td className="p-4 text-base font-normal text-gray-900 dark:text-white">
-                        x1
-                      </td>
-                      <td className="p-4 text-right text-base font-bold text-gray-900 dark:text-white">
-                        $898
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="whitespace-nowrap py-4 md:w-[384px]">
-                        <div className="flex items-center gap-4">
-                          <a
-                            href="#"
-                            className="flex items-center aspect-square w-10 h-10 shrink-0"
-                          >
-                            <img
-                              className="h-auto w-full max-h-full dark:hidden"
-                              src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/xbox-light.svg"
-                              alt="xbox image"
-                            />
-                            <img
-                              className="hidden h-auto w-full max-h-full dark:block"
-                              src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/xbox-dark.svg"
-                              alt="xbox image"
-                            />
-                          </a>
-                          <a href="#" className="hover:underline">
-                            Xbox Series X
-                          </a>
-                        </div>
-                      </td>
-                      <td className="p-4 text-base font-normal text-gray-900 dark:text-white">
-                        x4
-                      </td>
-                      <td className="p-4 text-right text-base font-bold text-gray-900 dark:text-white">
-                        $4,499
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="whitespace-nowrap py-4 md:w-[384px]">
-                        <div className="flex items-center gap-4">
-                          <a
-                            href="#"
-                            className="flex items-center aspect-square w-10 h-10 shrink-0"
-                          >
-                            <img
-                              className="h-auto w-full max-h-full dark:hidden"
-                              src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/ps5-light.svg"
-                              alt="playstation image"
-                            />
-                            <img
-                              className="hidden h-auto w-full max-h-full dark:block"
-                              src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/ps5-dark.svg"
-                              alt="playstation image"
-                            />
-                          </a>
-                          <a href="#" className="hover:underline">
-                            PlayStation 5
-                          </a>
-                        </div>
-                      </td>
-                      <td className="p-4 text-base font-normal text-gray-900 dark:text-white">
-                        x1
-                      </td>
-                      <td className="p-4 text-right text-base font-bold text-gray-900 dark:text-white">
-                        $499
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="whitespace-nowrap py-4 md:w-[384px]">
-                        <div className="flex items-center gap-4">
-                          <a
-                            href="#"
-                            className="flex items-center aspect-square w-10 h-10 shrink-0"
-                          >
-                            <img
-                              className="h-auto w-full max-h-full dark:hidden"
-                              src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/macbook-pro-light.svg"
-                              alt="macbook image"
-                            />
-                            <img
-                              className="hidden h-auto w-full max-h-full dark:block"
-                              src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/macbook-pro-dark.svg"
-                              alt="macbook image"
-                            />
-                          </a>
-                          <a href="#" className="hover:underline">
-                            MacBook Pro 16"
-                          </a>
-                        </div>
-                      </td>
-                      <td className="p-4 text-base font-normal text-gray-900 dark:text-white">
-                        x1
-                      </td>
-                      <td className="p-4 text-right text-base font-bold text-gray-900 dark:text-white">
-                        $499
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="whitespace-nowrap py-4 md:w-[384px]">
-                        <div className="flex items-center gap-4">
-                          <a
-                            href="#"
-                            className="flex items-center aspect-square w-10 h-10 shrink-0"
-                          >
-                            <img
-                              className="h-auto w-full max-h-full dark:hidden"
-                              src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/apple-watch-light.svg"
-                              alt="watch image"
-                            />
-                            <img
-                              className="hidden h-auto w-full max-h-full dark:block"
-                              src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/apple-watch-dark.svg"
-                              alt="watch image"
-                            />
-                          </a>
-                          <a href="#" className="hover:underline">
-                            Apple Watch SE
-                          </a>
-                        </div>
-                      </td>
-                      <td className="p-4 text-base font-normal text-gray-900 dark:text-white">
-                        x2
-                      </td>
-                      <td className="p-4 text-right text-base font-bold text-gray-900 dark:text-white">
-                        $799
-                      </td>
-                    </tr>
+                    {carts?.orderItems?.map((cart, index) => (
+                      <tr key={index}>
+                        <td className="whitespace-nowrap py-4 md:w-[384px]">
+                          <div className="flex items-center gap-4">
+                            <a
+                              href="#"
+                              className="flex items-center aspect-square w-16 h-16 shrink-0"
+                            >
+                              <img
+                                className="h-auto w-full max-h-full dark:hidden"
+                                src={`/img/products/${cart.product.coverImg}`}
+                                alt="imac image"
+                              />
+                            </a>
+                            <a href="#" className="hover:underline">
+                              {cart.product.name}
+                            </a>
+                          </div>
+                        </td>
+                        <td className="p-4 text-base font-normal text-gray-900 dark:text-white">
+                          x{cart.quantity}
+                        </td>
+                        <td className="p-4 text-right text-base font-bold text-gray-900 dark:text-white">
+                          ${cart.price}
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
@@ -260,10 +339,10 @@ const SummaryOrder = () => {
                         Original price
                       </dt>
                       <dd className="text-base font-medium text-gray-900 dark:text-white">
-                        $6,592.00
+                        ${carts?.totalPrice}
                       </dd>
                     </dl>
-                    <dl className="flex items-center justify-between gap-4">
+                    {/* <dl className="flex items-center justify-between gap-4">
                       <dt className="text-gray-500 dark:text-gray-400">
                         Savings
                       </dt>
@@ -284,7 +363,7 @@ const SummaryOrder = () => {
                       <dd className="text-base font-medium text-gray-900 dark:text-white">
                         $799
                       </dd>
-                    </dl>
+                    </dl> */}
                   </div>
                   <dl className="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
                     <dt className="text-lg font-bold text-gray-900 dark:text-white">
@@ -306,7 +385,6 @@ const SummaryOrder = () => {
                     htmlFor="terms-checkbox-2"
                     className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                   >
-                    {' '}
                     I agree with the{' '}
                     <a
                       href="#"
@@ -314,20 +392,20 @@ const SummaryOrder = () => {
                       className="text-primary-700 underline hover:no-underline dark:text-primary-500"
                     >
                       Terms and Conditions
-                    </a>{' '}
-                    of use of the Flowbite marketplace{' '}
+                    </a>
+                    of use of the Flowbite marketplace
                   </label>
                 </div>
                 <div className="gap-4 sm:flex sm:items-center">
                   <button
                     type="button"
-                    className="w-full rounded-lg  border border-gray-200 bg-white px-5  py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"
+                    className="w-full  text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                   >
                     Return to Shopping
                   </button>
                   <button
-                    type="submit"
-                    className="mt-4 flex w-full items-center justify-center rounded-lg bg-primary-700  px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300  dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 sm:mt-0"
+                    type="button"
+                    className="w-full  text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                   >
                     Send the order
                   </button>

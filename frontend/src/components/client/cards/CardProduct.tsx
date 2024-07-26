@@ -16,7 +16,7 @@ type CardProductProps = {
 const CardProduct = ({ product }: CardProductProps, key: number) => {
   const { showSnackbar } = useSnackbar();
   const [heart, setHeart] = useState<boolean>(false);
-  const hanleClickHeart = () => {
+  const hanleClickHeart = (idProduct: string) => {
     setHeart(() => !heart);
   };
   if (heart) {
@@ -52,7 +52,7 @@ const CardProduct = ({ product }: CardProductProps, key: number) => {
               </Link>
 
               <button
-                onClick={hanleClickHeart}
+                onClick={() => hanleClickHeart(product._id)}
                 className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
               >
                 {!heart ? (

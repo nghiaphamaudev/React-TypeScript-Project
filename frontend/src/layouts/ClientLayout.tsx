@@ -5,13 +5,12 @@ import { CartProvider } from 'src/contexts/StateCart';
 
 const ClientLayout = () => {
   return (
-    <>
-      <CartProvider>
-        <Header />
-        <Outlet />
-        <Footer />
-      </CartProvider>
-    </>
+    <CartProvider>
+      {' '}
+      <Header />
+      <Outlet />
+      <Footer />
+    </CartProvider>
   );
 };
 
