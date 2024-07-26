@@ -16,6 +16,10 @@ const cartSchema = new mongoose.Schema(
           required: true,
           ref: 'Laptop',
         },
+        isSelected: {
+          type: Boolean,
+          default: true,
+        },
       },
     ],
   },

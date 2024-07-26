@@ -1,9 +1,7 @@
-import TransitionsModal from '../admin/Modal';
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
-import AddProduct from '../admin/AddProduct';
 import AddIcon from '@mui/icons-material/Add';
 import { useState, useEffect } from 'react';
 import { Address } from 'src/types/users';
@@ -11,7 +9,7 @@ import axiosInstance from 'src/config/axiosConfig';
 import { Cart } from 'src/types/cart';
 import blue from '@mui/material/colors/blue';
 import grey from '@mui/material/colors/grey';
-import { IconButton, Typography } from '@mui/material';
+import { TextField, Typography } from '@mui/material';
 import { CheckBox } from '@mui/icons-material';
 import MyButton from './buttons/MyButton';
 const style = {
@@ -27,35 +25,12 @@ const style = {
   px: 4,
   pb: 3,
 };
-function ChildModal() {
-  const [openChild, setOpenChild] = React.useState(false);
-  const handleOpenChild = () => {
-    setOpenChild(true);
-  };
-  const handleCloseChild = () => {
-    setOpenChild(false);
-  };
+type AddressForm = {
+  name: string;
+  address: string;
+  phone: string;
+};
 
-  return (
-    <React.Fragment>
-      <Button onClick={handleOpenChild}>Open Child Modal</Button>
-      <Modal
-        open={openChild}
-        onClose={handleCloseChild}
-        aria-labelledby="child-modal-title"
-        aria-describedby="child-modal-description"
-      >
-        <Box sx={{ ...style, width: 700 }}>
-          <h2 id="child-modal-title">Text in a child modal</h2>
-          <p id="child-modal-description">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-          </p>
-          <Button onClick={handleCloseChild}>Close Child Modal</Button>
-        </Box>
-      </Modal>
-    </React.Fragment>
-  );
-}
 const SummaryOrder = () => {
   const [open, setOpen] = React.useState(false);
   const [openChild, setOpenChild] = React.useState(false);
@@ -78,7 +53,7 @@ const SummaryOrder = () => {
       const { data } = await axiosInstance.get('/carts');
       setAddresses(data.data.user.addresses);
       setCarts(data.data);
-      if (data.data.user.addresses.length < 0) setOpen(true);
+      if (data.data.user.addresses.length === 0) setOpenChild(true);
     } catch (error) {
       console.log(error);
     }
@@ -92,10 +67,6 @@ const SummaryOrder = () => {
   }, []);
 
   console.log(addresses);
-  // useEffect(() => {
-  //   if (addresses.length < 0) return setOpen(true);
-  // }, [addresses]);
-
   return (
     <div>
       <>
@@ -140,7 +111,7 @@ const SummaryOrder = () => {
                 aria-labelledby="parent-modal-title"
                 aria-describedby="parent-modal-description"
               >
-                <Box sx={{ ...style, width: 700 }}>
+                <Box sx={{ ...style, width: 800 }}>
                   <Box sx={{ borderBottom: '1px solid #ddd', py: 2 }}>
                     <Typography variant="h6" sx={{ fontVariant: 'normal' }}>
                       My addresses
@@ -220,65 +191,89 @@ const SummaryOrder = () => {
                   aria-labelledby="child-modal-title"
                   aria-describedby="child-modal-description"
                 >
-                  <Box sx={{ ...style, width: 700 }}>
+                  <Box sx={{ ...style, width: 800, p: 10 }}>
+                    <h3 className="text-xl text-center mb-8 font-semibold text-gray-900 dark:text-white">
+                      Add new address
+                    </h3>
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                       <div>
-                        <label
-                          htmlFor="your_name"
-                          className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                        >
-                          {' '}
-                          Your name{' '}
-                        </label>
-                        <input
-                          type="text"
-                          id="your_name"
-                          className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
-                          placeholder="Bonnie Green"
+                        <Typography gutterBottom sx={{ fontSize: '15px' }}>
+                          Price
+                        </Typography>
+                        <TextField
+                          type={'text'}
+                          sx={{ border: 'none' }}
+                          // {...register('price', {
+                          //   required: 'Price product is required!',
+                          //   min: {
+                          //     value: 0,
+                          //     message: 'Price discount must be non-negative',
+                          //   },
+                          // })}
+                          // error={!!errors?.price?.message}
+                          // helperText={errors?.price?.message}
+                          placeholder="Type price product"
+                          fullWidth
                         />
                       </div>
                       <div>
-                        <label
-                          htmlFor="your_email"
-                          className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                        >
-                          {' '}
-                          Your email*{' '}
-                        </label>
-                        <input
-                          type="email"
-                          id="your_email"
-                          className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
-                          placeholder="name@flowbite.com"
+                        <Typography gutterBottom sx={{ fontSize: '15px' }}>
+                          Price
+                        </Typography>
+                        <TextField
+                          type={'text'}
+                          sx={{ border: 'none' }}
+                          // {...register('price', {
+                          //   required: 'Price product is required!',
+                          //   min: {
+                          //     value: 0,
+                          //     message: 'Price discount must be non-negative',
+                          //   },
+                          // })}
+                          // error={!!errors?.price?.message}
+                          // helperText={errors?.price?.message}
+                          placeholder="Type price product"
+                          fullWidth
                         />
                       </div>
                       <div>
-                        <label
-                          htmlFor="your_email"
-                          className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                        >
-                          {' '}
-                          Your email*{' '}
-                        </label>
-                        <input
-                          type="email"
-                          id="your_email"
-                          className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
-                          placeholder="name@flowbite.com"
+                        <Typography gutterBottom sx={{ fontSize: '15px' }}>
+                          Price
+                        </Typography>
+                        <TextField
+                          type={'text'}
+                          sx={{ border: 'none' }}
+                          // {...register('price', {
+                          //   required: 'Price product is required!',
+                          //   min: {
+                          //     value: 0,
+                          //     message: 'Price discount must be non-negative',
+                          //   },
+                          // })}
+                          // error={!!errors?.price?.message}
+                          // helperText={errors?.price?.message}
+                          placeholder="Type price product"
+                          fullWidth
                         />
                       </div>
                       <div>
-                        <label
-                          htmlFor="your_email"
-                          className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                        >
-                          Your email*
-                        </label>
-                        <input
-                          type="email"
-                          id="your_email"
-                          className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
-                          placeholder="name@flowbite.com"
+                        <Typography gutterBottom sx={{ fontSize: '15px' }}>
+                          Price
+                        </Typography>
+                        <TextField
+                          type={'text'}
+                          sx={{ border: 'none' }}
+                          // {...register('price', {
+                          //   required: 'Price product is required!',
+                          //   min: {
+                          //     value: 0,
+                          //     message: 'Price discount must be non-negative',
+                          //   },
+                          // })}
+                          // error={!!errors?.price?.message}
+                          // helperText={errors?.price?.message}
+                          placeholder="Type price product"
+                          fullWidth
                         />
                       </div>
 

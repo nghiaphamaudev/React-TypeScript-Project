@@ -1,23 +1,34 @@
-import mongoose from 'mongoose';
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose');
 
-const OrderSchema = new Schema(
+const orderSchema = mongoose.Schema(
   {
     user: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.ObjectId,
       ref: 'User',
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    phone: {
+      type: String,
+      required: true,
+    },
+    address: {
+      type: String,
+      required: true,
     },
 
     payment: {
       type: String,
+      required: true,
       enum: ['COD', 'PAYPAL', 'CREDIT'],
-      default: 'COD',
     },
     products: [
       {
         product: {
-          type: Schema.Types.ObjectId,
-          ref: 'Product',
+          type: mongoose.Schema.ObjectId,
+          ref: 'Laptop',
         },
         quantity: {
           type: Number,
@@ -29,13 +40,26 @@ const OrderSchema = new Schema(
         },
       },
     ],
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true },
     timestamps: true,
     versionKey: false,
   }
 );
 
-const Order = mongoose.model('Order', OrderSchema);
+orderSchema.virtual('totalOrder').get(function () {
+  return this.products.reduce(
+    (total, item) => total + item.quantity * item.price,
+    0
+  );
+});
 
-export default Order;
+const Order = mongoose.model('Order', orderSchema);
+
+module.exports = Order;

@@ -56,3 +56,46 @@ exports.getUser = catchAsync(async (req, res, next) => {
     data: user,
   });
 });
+
+exports.addAddress = catchAsync(async (req, res, next) => {
+  const currentUser = req.user;
+  const { name, phone, address } = req.body;
+  const newAddress = [...currentUser.addresses, { name, phone, address }];
+  //Add new address
+  const addresses = await User.findByIdAndUpdate(
+    currentUser._id,
+    { addresses: newAddress },
+    {
+      new: true,
+    }
+  );
+  res.status(200).json({
+    status: 'success',
+    data: addresses,
+  });
+});
+
+exports.updateAddress = catchAsync(async (req, res, next) => {
+  const currentUser = req.user;
+  const idAddress = req.params.id;
+  console.log(idAddress);
+  const { name, phone, address } = req.body;
+
+  // tìm và cập nhật địa chỉ
+  const updatedAddresses = currentUser.addresses.map((addr) =>
+    addr._id.toString() === idAddress
+      ? { ...addr.toObject(), name, phone, address }
+      : addr
+  );
+
+  const user = await User.findByIdAndUpdate(
+    currentUser._id,
+    { addresses: updatedAddresses },
+    { new: true }
+  );
+
+  res.status(200).json({
+    status: 'success',
+    data: user.addresses,
+  });
+});

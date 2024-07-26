@@ -7,6 +7,7 @@ const laptopRouter = require('./routes/laptopRoutes');
 const categoryRouter = require('./routes/categoryRoutes');
 const userRouter = require('./routes/userRoutes');
 const cartRouter = require('./routes/cartRoutes');
+const orderRouter = require('./routes/orderRoutes');
 const globalHandleError = require('./controllers/errorController');
 const AppError = require('./utils/appError');
 
@@ -27,6 +28,7 @@ app.use('/api/v1/laptops', laptopRouter);
 app.use('/api/v1/categories', categoryRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/carts', cartRouter);
+app.use('/api/v1/orders', orderRouter);
 
 app.all('*', (req, res, next) => {
   return next(

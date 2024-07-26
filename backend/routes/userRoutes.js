@@ -13,6 +13,8 @@ userRouter.patch('/resetPassword/:token', authController.resetPassword);
 userRouter.use(authController.protect);
 
 userRouter.patch('/updatePassword', authController.updatePassword);
+userRouter.post('/address', userController.addAddress);
+userRouter.patch('/address/:id', userController.updateAddress);
 
 userRouter
   .route('/')
