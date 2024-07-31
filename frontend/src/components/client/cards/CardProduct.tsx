@@ -9,6 +9,7 @@ import TextRating from 'src/components/ratings/rating';
 import { useState } from 'react';
 import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';
 import { useSnackbar } from 'src/contexts/Snackbar';
+import axiosInstance from 'src/config/axiosConfig';
 
 type CardProductProps = {
   product: Products;
@@ -16,12 +17,16 @@ type CardProductProps = {
 const CardProduct = ({ product }: CardProductProps, key: number) => {
   const { showSnackbar } = useSnackbar();
   const [heart, setHeart] = useState<boolean>(false);
-  const hanleClickHeart = (idProduct: string) => {
-    setHeart(() => !heart);
+  const hanleAddFavoriteProduct = async (idProduct: string) => {
+    try {
+      await axiosInstance.post(`/users/favorite-products/${idProduct}`);
+      showSnackbar('success', 'Added product to favorite!');
+      setHeart(true);
+    } catch (error: any) {
+      showSnackbar('error', error.response.data.message);
+    }
   };
-  if (heart) {
-    showSnackbar('success', 'Added product to favorite!');
-  }
+
   return (
     <div>
       <div
@@ -52,7 +57,7 @@ const CardProduct = ({ product }: CardProductProps, key: number) => {
               </Link>
 
               <button
-                onClick={() => hanleClickHeart(product._id)}
+                onClick={() => hanleAddFavoriteProduct(product._id)}
                 className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
               >
                 {!heart ? (

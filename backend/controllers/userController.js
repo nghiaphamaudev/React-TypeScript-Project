@@ -1,6 +1,7 @@
 const AppError = require('../utils/appError');
 const User = require('./../models/userModel');
 const catchAsync = require('../utils/catchAsync');
+const Laptop = require('../models/laptopModel');
 const sendResponse = require('../utils/sendResponse');
 
 exports.getAllUser = catchAsync(async (req, res, next) => {
@@ -47,7 +48,14 @@ exports.getMe = (req, res, next) => {
 };
 
 exports.getUser = catchAsync(async (req, res, next) => {
-  const user = await User.findById(req.params.id);
+  const user = await User.findById(req.params.id).populate({
+    path: 'favoriteProduct',
+    populate: {
+      path: 'product',
+      model: Laptop,
+      select: '-__v',
+    },
+  });
   if (!user) {
     return next(new AppError('The ID Users not exsited!', 400));
   }
@@ -61,7 +69,6 @@ exports.addAddress = catchAsync(async (req, res, next) => {
   const currentUser = req.user;
   let isDefault = false;
   const { name, phone, address } = req.body;
-  console.log(currentUser.addresses.length);
   if (currentUser.addresses.length === 0) {
     isDefault = true;
   }
@@ -148,18 +155,34 @@ exports.updateStatusAddress = catchAsync(async (req, res, next) => {
 
 exports.addFavoriteProduct = catchAsync(async (req, res, next) => {
   const currentUser = req.user;
-  const { name, phone, address } = req.body;
-  const newAddress = [...currentUser.addresses, { name, phone, address }];
-  //Add new address
-  const addresses = await User.findByIdAndUpdate(
+  const idFavoriteProduct = req.params.id;
+  const favoriteProduct = await User.findByIdAndUpdate(
     currentUser._id,
-    { addresses: newAddress },
-    {
-      new: true,
-    }
+    { $push: { favoriteProduct: { product: idFavoriteProduct } } },
+    { new: true, runValidators: true }
   );
+
+  //Add new address
+
   res.status(200).json({
     status: 'success',
-    data: addresses,
+    data: favoriteProduct,
+  });
+});
+
+exports.removeFavoriteProduct = catchAsync(async (req, res, next) => {
+  const currentUser = req.user;
+  const idFavoriteProduct = req.params.id;
+
+  // Remove product from favoriteProduct array
+  const updatedUser = await User.findByIdAndUpdate(
+    currentUser._id,
+    { $pull: { favoriteProduct: { product: idFavoriteProduct } } },
+    { new: true, runValidators: true }
+  );
+
+  res.status(200).json({
+    status: 'success',
+    data: updatedUser,
   });
 });

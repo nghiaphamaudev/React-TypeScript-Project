@@ -9,7 +9,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import LoginIcon from '@mui/icons-material/Login';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import AccountMenu from '../admin/avatar/Avatar';
-
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useCart } from 'src/contexts/StateCart';
 import { useUser } from 'src/contexts/AuthContext';
 import axiosInstance from 'src/config/axiosConfig';
@@ -184,10 +184,7 @@ const Header = () => {
                 <span className="sr-only">View notifications</span>
                 <IconButton aria-label="cart">
                   <StyledBadge badgeContent={itemCount} color="secondary">
-                    <NotificationsNoneIcon
-                      fontSize="large"
-                      sx={{ color: '#cbd5e1' }}
-                    />
+                    <FavoriteIcon fontSize="large" sx={{ color: '#cbd5e1' }} />
                   </StyledBadge>
                 </IconButton>
               </div>

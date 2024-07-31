@@ -1,7 +1,7 @@
 const express = require('express');
 const authController = require('./../controllers/authController');
 const userController = require('./../controllers/userController');
-const userRouter = express.Router();
+const userRouter = express.Router({ mergeParams: true });
 
 //Authen
 userRouter.post('/signup', authController.signup);
@@ -22,12 +22,18 @@ userRouter.patch(
   userController.updateStatusAddress
 );
 
+/// Favorite Product
+userRouter
+  .route('/favorite-products/:id')
+  .post(userController.addFavoriteProduct)
+  .patch(userController.removeFavoriteProduct);
+
 userRouter
   .route('/')
   .get(authController.restrictTo('admin'), userController.getAllUser);
 
 userRouter.patch('/update-me', authController.protect, userController.updateMe);
-userRouter.get('/get-me', userController.getMe, userController.getUser);
+userRouter.get('/get-me/:id', userController.getMe, userController.getUser);
 
 // for admin
 userRouter.patch(
