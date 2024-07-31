@@ -33,14 +33,12 @@ const Header = () => {
     try {
       const data = await axiosInstance.get('/carts');
       setCart(data.data.data);
-      console.log(data.data);
     } catch (error: any) {
       console.log(error);
     }
   };
   const getUser = async () => {
     const id = JSON.parse(localStorage.getItem('user') ?? 'null') || null;
-    console.log(id);
     try {
       const data = await axiosInstance.get(`/users/${id}`);
       setUser(data.data.data);

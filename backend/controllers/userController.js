@@ -59,8 +59,17 @@ exports.getUser = catchAsync(async (req, res, next) => {
 
 exports.addAddress = catchAsync(async (req, res, next) => {
   const currentUser = req.user;
+  let isDefault = false;
   const { name, phone, address } = req.body;
-  const newAddress = [...currentUser.addresses, { name, phone, address }];
+  console.log(currentUser.addresses.length);
+  if (currentUser.addresses.length === 0) {
+    isDefault = true;
+  }
+
+  const newAddress = [
+    ...currentUser.addresses,
+    { name, phone, address, isDefault },
+  ];
   //Add new address
   const addresses = await User.findByIdAndUpdate(
     currentUser._id,
@@ -78,7 +87,6 @@ exports.addAddress = catchAsync(async (req, res, next) => {
 exports.updateAddress = catchAsync(async (req, res, next) => {
   const currentUser = req.user;
   const idAddress = req.params.id;
-  console.log(idAddress);
   const { name, phone, address } = req.body;
 
   // tìm và cập nhật địa chỉ
@@ -97,5 +105,61 @@ exports.updateAddress = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     data: user.addresses,
+  });
+});
+
+exports.updateStatusAddress = catchAsync(async (req, res, next) => {
+  const currentUser = req.user;
+  const idAddressUpdate = req.params.id;
+
+  // Tìm và đặt isDefault thành false cho địa chỉ hiện tại đang là mặc định
+  const currentDefaultAddress = currentUser.addresses.find(
+    (address) => address.isDefault === true
+  );
+
+  //set isDefault cho address ti thay la false mang hien tai se la false
+  //Tat ca dang thao tac vo mang
+  if (currentDefaultAddress) {
+    currentDefaultAddress.isDefault = false;
+  }
+
+  // Tìm địa chỉ được truyền qua param và đặt isDefault thành true
+  const addressToUpdate = currentUser.addresses.find(
+    (address) => address._id.toString() === idAddressUpdate
+  );
+
+  if (!addressToUpdate) {
+    return next(new AppError('Address not found', 404));
+  }
+  addressToUpdate.isDefault = true;
+
+  currentUser.addresses.sort((a, b) => b.isDefault - a.isDefault);
+
+  // Cập nhật user với danh sách địa chỉ mới
+  await User.findByIdAndUpdate(currentUser._id, {
+    addresses: currentUser.addresses,
+  });
+
+  return res.status(200).json({
+    status: 'success',
+    data: currentUser.addresses,
+  });
+});
+
+exports.addFavoriteProduct = catchAsync(async (req, res, next) => {
+  const currentUser = req.user;
+  const { name, phone, address } = req.body;
+  const newAddress = [...currentUser.addresses, { name, phone, address }];
+  //Add new address
+  const addresses = await User.findByIdAndUpdate(
+    currentUser._id,
+    { addresses: newAddress },
+    {
+      new: true,
+    }
+  );
+  res.status(200).json({
+    status: 'success',
+    data: addresses,
   });
 });

@@ -4,17 +4,8 @@ import {
   Typography,
   Divider,
   Button,
-  Link,
   TextField,
   IconButton,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Input,
 } from '@mui/material';
 
 import { East as EastIcon } from '@mui/icons-material';
@@ -25,7 +16,7 @@ import { useLinearLoading } from 'src/contexts/Progress';
 import axiosInstance from 'src/config/axiosConfig';
 import { useSnackbar } from 'src/contexts/Snackbar';
 import { useCart } from 'src/contexts/StateCart';
-
+import { Link } from 'react-router-dom';
 const ShoppingCart = () => {
   const { showLoading, hideLoading } = useLinearLoading();
   const { showSnackbar } = useSnackbar();
@@ -243,13 +234,25 @@ const ShoppingCart = () => {
                   </Box>
                 </Box>
                 <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    sx={{ py: 1, px: 4, width: '100%', maxWidth: 300 }}
+                  <Box
+                    sx={{
+                      display: 'inline-block',
+                      textAlign: 'center',
+                      py: 1,
+                      px: 4,
+                      width: '100%',
+                      maxWidth: 300,
+                      textDecoration: 'none',
+                      color: 'white',
+                      backgroundColor: 'primary.main', // Hoặc màu bạn muốn
+                      borderRadius: '4px',
+                      '&:hover': {
+                        backgroundColor: 'primary.dark', // Hoặc màu hover bạn muốn
+                      },
+                    }}
                   >
-                    Proceed to Checkout
-                  </Button>
+                    <Link to={'/shopping-cart/order'}>Proceed to Checkout</Link>
+                  </Box>
                 </Box>
                 <Box
                   sx={{
@@ -262,12 +265,12 @@ const ShoppingCart = () => {
                   <Typography variant="body2" color="text.secondary">
                     or
                   </Typography>
-                  <Link
-                    href="/products"
-                    underline="none"
-                    sx={{ mx: 1, color: blue[700] }}
-                  >
-                    <Typography variant="body2" fontWeight="medium">
+                  <Link to={'/products'}>
+                    <Typography
+                      variant="body2"
+                      fontWeight="medium"
+                      sx={{ mx: 1, color: blue[700] }}
+                    >
                       Continue Shopping
                     </Typography>
                   </Link>

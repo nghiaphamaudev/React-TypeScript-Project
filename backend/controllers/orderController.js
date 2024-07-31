@@ -50,6 +50,13 @@ exports.createOrderFromCart = catchAsync(async (req, res, next) => {
     price: item.price,
   }));
 
+  let total = orderItems.reduce(
+    (total, item) => total + item.quantity * item.price,
+    0
+  );
+
+  payment === 'COD' ? (total += 50) : total;
+
   const newOrder = await Order.create({
     user: userId,
     payment,
@@ -57,6 +64,7 @@ exports.createOrderFromCart = catchAsync(async (req, res, next) => {
     address: address,
     name: name,
     phone: phone,
+    totalOrder: total,
   });
   //Cập nhật lại giỏ hàng
   cart.orderItems = unSelectedItems;

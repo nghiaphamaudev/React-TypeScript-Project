@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['admin', 'user', 'guide', 'lead-guide'],
+    enum: ['admin', 'user'],
     default: 'user',
   },
   addresses: [
@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema({
       name: String,
       phone: String,
       address: String,
-      isDefault: { type: Boolean, default: false },
+      isDefault: Boolean,
     },
   ],
   favoriteProduct: [
@@ -74,17 +74,6 @@ userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 12);
   this.passwordConfirm = undefined;
-  next();
-});
-
-//check dia chi isdefault
-userSchema.pre('save', function (next) {
-  if (this.isModified('addresses') && this.addresses.length > 0) {
-    const defaultAddress = this.addresses.find((address) => address.isDefault);
-    if (!defaultAddress) {
-      this.addresses[0].isDefault = true;
-    }
-  }
   next();
 });
 
