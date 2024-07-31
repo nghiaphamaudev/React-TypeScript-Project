@@ -1,47 +1,17 @@
 // Login.tsx
 import { Box, TextField, Typography } from '@mui/material';
-
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import MyButton from 'src/components/client/buttons/MyButton';
-import axiosInstance from 'src/config/axiosConfig';
-import { useUser } from 'src/contexts/AuthContext';
-import { useSnackbar } from 'src/contexts/Snackbar';
-import { useCart } from 'src/contexts/StateCart';
 
-type LoginFormParams = {
-  email: string;
-  password: string;
-};
+import useAuth from 'src/hooks/useAuth';
 
 const Login = () => {
-  const navigate = useNavigate();
-  const { showSnackbar } = useSnackbar();
-  const { setUser } = useUser();
-  const { setCart } = useCart();
+  const { login, loginForm } = useAuth();
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormParams>();
-
-  const onSubmit: SubmitHandler<LoginFormParams> = async (data) => {
-    try {
-      const res = await axiosInstance.post('/users/signin', data);
-      localStorage.setItem('accessToken', res.data.accessToken);
-      localStorage.setItem('user', JSON.stringify(res.data.data._id));
-      setUser(res.data.data);
-
-      const respose = await axiosInstance.get('/carts');
-      setCart(respose.data.data);
-      showSnackbar('success', 'Login is successfully!');
-      setTimeout(() => {
-        navigate('/home');
-      }, 3000);
-    } catch (error: any) {
-      showSnackbar('error', error.response.data.message);
-    }
-  };
+  } = loginForm;
 
   return (
     <div>
@@ -59,7 +29,7 @@ const Login = () => {
               </Typography>
               <form
                 className="space-y-4 md:space-y-6"
-                onSubmit={handleSubmit(onSubmit)}
+                onSubmit={handleSubmit(login)}
               >
                 <Box>
                   <Typography

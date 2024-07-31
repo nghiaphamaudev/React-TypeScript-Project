@@ -2,36 +2,17 @@ import AddIcon from '@mui/icons-material/Add';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import { yellow } from '@mui/material/colors';
-import { useState, useEffect } from 'react';
-import { Products } from 'src/types/products';
-
 import DeleteDialog from './cofirm/Dialog';
 import TextRating from '../ratings/rating';
-
-import axiosInstance from 'src/config/axiosConfig';
 import TransitionsModal from './Modal';
 import AddProduct from './AddProduct';
 import CardProduct from '../client/cards/CardProduct';
+import useProducts from 'src/hooks/useProduct';
 
 const ListProduct = () => {
-  const [products, setProducts] = useState<Products[]>([]);
+  const { products, getAllProduct } = useProducts();
   const reloadProduct = () => getAllProduct();
-  const getAllProduct = async () => {
-    try {
-      const { data } = await axiosInstance.get('/laptops');
-      setProducts(() => data.data);
-    } catch (error: any) {
-      if (error.code === 'ERR_NETWORK') {
-      } else {
-        console.log(error);
-      }
-    } finally {
-      console.log('Hello');
-    }
-  };
-  useEffect(() => {
-    getAllProduct();
-  }, []);
+
   return (
     <div>
       <>

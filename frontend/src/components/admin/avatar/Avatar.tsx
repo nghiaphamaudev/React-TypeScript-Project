@@ -8,7 +8,7 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Badge from '@mui/material/Badge';
 import Avatar from '@mui/material/Avatar';
-import Stack from '@mui/material/Stack';
+import ReceiptIcon from '@mui/icons-material/Receipt';
 import Tooltip from '@mui/material/Tooltip';
 import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
@@ -161,6 +161,12 @@ export default function AccountMenu({ photo, username }: AccountMenuProp) {
             <Settings fontSize="small" />
           </ListItemIcon>
           Settings
+        </MenuItem>
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <ReceiptIcon fontSize="small" />
+          </ListItemIcon>
+          <Link to={'/my-orders'}>My order</Link>
         </MenuItem>
         <MenuItem onClick={hanleLogout}>
           <ListItemIcon>

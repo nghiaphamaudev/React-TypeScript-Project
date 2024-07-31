@@ -1,12 +1,18 @@
-const Cart = require('../models/cartModel');
 const Order = require('../models/orderModel');
-const User = require('../models/userModel');
+const Laptop = require('../models/laptopModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
 exports.getOrderUser = catchAsync(async (req, res, next) => {
   const idUser = req.user._id;
-  const orders = await Order.find({ user: idUser });
+  const orders = await Order.find({ user: idUser }).populate({
+    path: 'products',
+    populate: {
+      path: 'product',
+      model: Laptop,
+      select: '_id name summary coverImg ',
+    },
+  });
   res.status(200).json({
     status: 'success',
     data: orders,

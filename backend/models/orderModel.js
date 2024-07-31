@@ -56,12 +56,12 @@ const orderSchema = mongoose.Schema(
   }
 );
 
-// orderSchema.virtual('totalOrder').get(function () {
-//   return this.products.reduce(
-//     (total, item) => total + item.quantity * item.price,
-//     0
-//   );
-// });
+orderSchema.virtual('subTotal').get(function () {
+  return this.products.reduce(
+    (total, item) => total + item.quantity * item.price,
+    0
+  );
+});
 
 const Order = mongoose.model('Order', orderSchema);
 

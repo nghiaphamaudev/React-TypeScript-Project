@@ -1,7 +1,7 @@
 import './App.css';
 
 import { Navigate, useRoutes, useLocation } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+
 import ClientLayout from './layouts/ClientLayout';
 import HomePage from './pages/client/HomePage';
 import DetailProduct from './pages/client/DetailProduct';
@@ -10,13 +10,12 @@ import PageNotFound from './pages/client/PageNotFound';
 import Login from './pages/client/Login';
 import Register from './pages/client/Register';
 import SummaryOrder from './components/client/SummaryOrder';
-import Checkout from './components/client/Checkout';
-import Payment from './components/client/Payment';
+
 import ShoppingLayout from './layouts/ShoppingLayout';
 import AdminLayout from './layouts/AdminLayout';
 import ListProduct from './components/admin/ListProduct';
 import ShoppingCart from './components/client/ShoppingCart';
-import { CartProvider } from './contexts/StateCart';
+
 import { AuthProvider } from './contexts/AuthContext';
 import { SnackbarProvider } from './contexts/Snackbar';
 import { LinearLoadingProvider } from './contexts/Progress';
@@ -24,6 +23,11 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import ErrorBoundary from './contexts/ErroBoundary';
 import { useEffect, useRef } from 'react';
+import CompleteOrder from './components/client/CompleteOrder';
+
+import HistoryOrder from './components/client/HistoryOrder';
+import Checkout from './components/client/Checkout';
+import Invoice from './components/client/Invoice';
 
 const theme = createTheme({
   typography: {
@@ -54,15 +58,17 @@ const routerConfig = [
       { path: 'register', element: <Register /> },
       { path: 'login', element: <Login /> },
       { path: 'products', element: <AllProduct /> },
+      { path: 'my-orders', element: <HistoryOrder /> },
+
       {
         path: 'shopping-cart',
         element: <ShoppingLayout />,
         children: [
           { path: '', element: <Navigate to="/shopping-cart/cart" /> },
           { path: 'cart', element: <ShoppingCart /> },
-          { path: 'check-out', element: <Checkout /> },
           { path: 'order', element: <SummaryOrder /> },
-          { path: 'payment', element: <Payment /> },
+          { path: 'complete', element: <CompleteOrder /> },
+          { path: 'check-out', element: <Checkout /> },
         ],
       },
       { path: 'product/:id', element: <DetailProduct /> },

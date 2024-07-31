@@ -14,7 +14,7 @@ import { Checkbox, TextField, Typography } from '@mui/material';
 import MyButton from './buttons/MyButton';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useSnackbar } from 'src/contexts/Snackbar';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from 'src/contexts/StateCart';
 const style = {
   position: 'absolute' as 'absolute',
@@ -37,6 +37,7 @@ type AddressForm = {
 };
 
 const SummaryOrder = () => {
+  const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
   const [shipPrice, setShipPrice] = useState<number | null>(0);
   const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
@@ -89,8 +90,10 @@ const SummaryOrder = () => {
   const hanldeOrderSubmit = async () => {
     const data = { payment: paymentMethod };
     try {
-      await axiosInstance.post('/orders', data);
+      const res = await axiosInstance.post('/orders', data);
+      localStorage.setItem('orderCurrent', JSON.stringify(res.data.data));
       showSnackbar('success', 'Order is successfully!');
+      navigate('/shopping-cart/complete');
       const cart = await axiosInstance.get('/carts');
       setCart(cart.data);
     } catch (error: any) {

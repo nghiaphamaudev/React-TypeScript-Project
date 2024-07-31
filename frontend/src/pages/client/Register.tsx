@@ -1,44 +1,16 @@
-import axios from 'axios';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { useSnackbar } from 'src/contexts/Snackbar';
-
 import Box from '@mui/material/Box';
-
 import TextField from '@mui/material/TextField';
 import { Typography } from '@mui/material';
-import Button from 'src/components/client/buttons/MyButton';
-import { Link, useNavigate } from 'react-router-dom';
-import axiosInstance from 'src/config/axiosConfig';
+import { Link } from 'react-router-dom';
 import MyButton from 'src/components/client/buttons/MyButton';
-
-type RegisterFormParams = {
-  username: string;
-  email: string;
-  password: string;
-  passwordConfirm: string;
-};
+import useAuth from 'src/hooks/useAuth';
 const Register = () => {
-  const { showSnackbar } = useSnackbar();
-  const navigate = useNavigate();
+  const { registerForm, registerUser } = useAuth();
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<RegisterFormParams>();
-
-  const onSubmit: SubmitHandler<RegisterFormParams> = async (data) => {
-    try {
-      await axiosInstance.post('/users/signup', data);
-      showSnackbar('success', 'Register is successfully!');
-      setTimeout(() => {
-        navigate('/login');
-      }, 3000);
-    } catch (error: any) {
-      console.log(error);
-      showSnackbar('error', error.response.data.message);
-    }
-  };
-
+  } = registerForm;
   return (
     <div>
       <section className="bg-gradient-to-r from-teal-200 to-lime-200 hover:bg-gradient-to-l hover:from-teal-200 hover:to-lime-200 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-teal-700">
@@ -55,7 +27,7 @@ const Register = () => {
               </Typography>
               <form
                 className="space-y-4 md:space-y-6"
-                onSubmit={handleSubmit(onSubmit)}
+                onSubmit={handleSubmit(registerUser)}
               >
                 <Box>
                   <Typography

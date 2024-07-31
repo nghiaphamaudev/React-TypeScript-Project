@@ -1,20 +1,15 @@
 import CardProduct from 'src/components/client/cards/CardProduct';
-import { useEffect, useState } from 'react';
-import { Products } from 'src/types/products';
-import { useNavigate } from 'react-router-dom';
-import { useSnackbar } from 'src/contexts/Snackbar';
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { useLinearLoading } from 'src/contexts/Progress';
-import axiosInstance from 'src/config/axiosConfig';
+
+import useProducts from 'src/hooks/useProduct';
 
 const AllProduct = () => {
-  const [products, setProducts] = useState<Products[]>([]);
+  const { products } = useProducts();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const { showSnackbar } = useSnackbar();
-  const { showLoading, hideLoading } = useLinearLoading();
+
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -22,38 +17,6 @@ const AllProduct = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  const navigate = useNavigate();
-  const getAllProduct = async () => {
-    showLoading();
-    try {
-      const { data } = await axiosInstance.get('/laptops');
-      setProducts(() => data.data);
-      console.log(data);
-      localStorage.setItem('product', JSON.stringify(data.data));
-    } catch (error: any) {
-      //Khi ko co internet
-      if (error.code === 'ERR_NETWORK') {
-        return showSnackbar(
-          'error',
-          'There is currently a network issue. Please try again later.'
-        );
-        //Api ko ton tai
-      }
-      if (error.code === 'ERR_BAD_REQUEST') {
-        //Api ko ton tai
-        console.log(error);
-        return showSnackbar('error', 'API not found! Please connect again!');
-      } else {
-        navigate('/404');
-      }
-    } finally {
-      hideLoading();
-    }
-  };
-  useEffect(() => {
-    getAllProduct();
-  }, []);
 
   return (
     <div>
