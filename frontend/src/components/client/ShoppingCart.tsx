@@ -7,51 +7,14 @@ import {
   TextField,
   IconButton,
 } from '@mui/material';
-
-import { East as EastIcon } from '@mui/icons-material';
-import { blue, green } from '@mui/material/colors';
-import { useState, useEffect } from 'react';
-import { Cart } from 'src/types/cart';
-import { useLinearLoading } from 'src/contexts/Progress';
-import axiosInstance from 'src/config/axiosConfig';
-import { useSnackbar } from 'src/contexts/Snackbar';
-import { useCart } from 'src/contexts/StateCart';
+import RemoveIcon from '@mui/icons-material/Remove';
+import { Add, East as EastIcon } from '@mui/icons-material';
+import { blue } from '@mui/material/colors';
 import { Link } from 'react-router-dom';
+import useCart from 'src/hooks/useCart';
+
 const ShoppingCart = () => {
-  const { showLoading, hideLoading } = useLinearLoading();
-  const { showSnackbar } = useSnackbar();
-  const [carts, setCarts] = useState<Cart | undefined>();
-  const { setCart } = useCart();
-  const getCart = async () => {
-    showLoading();
-    try {
-      const data = await axiosInstance.get('/carts');
-      setCarts(data.data.data);
-    } catch (error: any) {
-      if (error.response.data.error.name === 'JsonWebTokenError')
-        return showSnackbar(
-          'error',
-          'Your session has expired. Please log in again.'
-        );
-      showSnackbar('error', error.response.data.message);
-    } finally {
-      hideLoading();
-    }
-  };
-  const handleDeleteProduct = async (idProduct: string) => {
-    try {
-      const response = await axiosInstance.delete(`/carts/${idProduct}`);
-      showSnackbar('success', 'Delete product is successfully!');
-      setCart(response.data.data);
-      setCarts(response.data.data);
-    } catch (error: any) {
-      console.log(error);
-      showSnackbar('error', error);
-    }
-  };
-  useEffect(() => {
-    getCart();
-  }, []);
+  const { carts, handleDeleteProduct, handleUpdateQuantityCart } = useCart();
 
   return (
     <div>
@@ -77,7 +40,7 @@ const ShoppingCart = () => {
                         <th className="text-base p-4  font-semibold text-center">
                           Price {'   '}
                         </th>
-                        <th className="text-base p-4  font-semibold">
+                        <th className="text-base p-4 text-center  font-semibold">
                           Quantity
                         </th>
                         <th className="text-base text-gray-800 p-4 text-center font-semibold">
@@ -112,20 +75,63 @@ const ShoppingCart = () => {
                             </h4>
                           </td>
                           <td className="p-4">
-                            <div className="flex items-center justify-center border w-16 rounded-lg overflow-hidden">
-                              <input
-                                type="number"
-                                id="number-input"
-                                aria-describedby="helper-text-explanation"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm text-center rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                defaultValue={item.quantity}
-                              />
-                            </div>
+                            <>
+                              {/* Input Number */}
+                              <div
+                                className="py-2 px-3 inline-block bg-white border border-gray-200 rounded-lg dark:bg-neutral-900 dark:border-neutral-700"
+                                data-hs-input-number=""
+                              >
+                                <div className="flex items-center gap-x-1.5">
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      handleUpdateQuantityCart(
+                                        'minus',
+                                        item?.product?.id
+                                      )
+                                    }
+                                    className="size-6 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-md border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+                                    tabIndex={-1}
+                                    aria-label="Decrease"
+                                    data-hs-input-number-decrement=""
+                                  >
+                                    <RemoveIcon />
+                                  </button>
+                                  <input
+                                    className="p-0 w-6 bg-transparent border-0 text-gray-800 text-center focus:ring-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none dark:text-white"
+                                    style={{ MozAppearance: 'textfield' }}
+                                    type="number"
+                                    aria-roledescription="Number field"
+                                    value={item?.quantity}
+                                    data-hs-input-number-input=""
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      handleUpdateQuantityCart(
+                                        'plus',
+                                        item?.product?.id
+                                      )
+                                    }
+                                    className="size-6 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-md border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+                                    tabIndex={-1}
+                                    aria-label="Increase"
+                                    data-hs-input-number-increment=""
+                                  >
+                                    <Add />
+                                  </button>
+                                </div>
+                              </div>
+                              {/* End Input Number */}
+                            </>
                           </td>
 
                           <td className="p-4 text-center">
                             <h4 className="text-base font-normal text-gray-800">
-                              ${item.price * item.quantity}
+                              $
+                              {parseFloat(
+                                (item.price * item.quantity).toFixed(1)
+                              )}
                             </h4>
                           </td>
                           <td className="p-4 text-center">

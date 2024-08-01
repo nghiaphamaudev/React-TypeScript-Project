@@ -134,7 +134,7 @@ const Invoice = ({ orderInvoice }: InvoiceProps) => {
                     ${product.price}
                   </td>
                   <td className="py-5 pl-3 pr-4 text-right text-sm text-gray-500 sm:pr-0">
-                    ${product.price * product.quantity}
+                    ${parseFloat((product.price * product.quantity).toFixed(1))}
                   </td>
                 </tr>
               ))}

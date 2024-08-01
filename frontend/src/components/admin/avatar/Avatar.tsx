@@ -13,11 +13,9 @@ import Tooltip from '@mui/material/Tooltip';
 import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
-import { Link, useNavigate } from 'react-router-dom';
-import axiosInstance from 'src/config/axiosConfig';
-import { useSnackbar } from 'src/contexts/Snackbar';
-import { useUser } from 'src/contexts/AuthContext';
-import { useCart } from 'src/contexts/StateCart';
+import { Link } from 'react-router-dom';
+import useAuth from 'src/hooks/useAuth';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -48,23 +46,18 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   },
 }));
 
-const SmallAvatar = styled(Avatar)(({ theme }) => ({
-  width: 22,
-  height: 22,
-  border: `2px solid ${theme.palette.background.paper}`,
-}));
-
 type AccountMenuProp = {
   photo: string;
   username: string;
+  role: string;
 };
 
-export default function AccountMenu({ photo, username }: AccountMenuProp) {
+export default function AccountMenu({
+  photo,
+  username,
+  role,
+}: AccountMenuProp) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const { setUser } = useUser();
-  const { setCart } = useCart();
-  const { showSnackbar } = useSnackbar();
-  const navigate = useNavigate();
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -72,22 +65,7 @@ export default function AccountMenu({ photo, username }: AccountMenuProp) {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const hanleLogout = async () => {
-    try {
-      await axiosInstance.get('/users/logout');
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('user');
-      setUser(null);
-      setCart(null);
-      showSnackbar('success', 'Logout is successfully!');
-    } catch (error: any) {
-      showSnackbar('error', error.response.data.message);
-    } finally {
-      setTimeout(() => {
-        navigate('/login');
-      }, 3000);
-    }
-  };
+  const { hanleLogout } = useAuth();
   return (
     <React.Fragment>
       <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
@@ -162,12 +140,22 @@ export default function AccountMenu({ photo, username }: AccountMenuProp) {
           </ListItemIcon>
           Settings
         </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <ReceiptIcon fontSize="small" />
-          </ListItemIcon>
-          <Link to={'/my-orders'}>My order</Link>
-        </MenuItem>
+        {role === 'admin' ? (
+          <MenuItem onClick={handleClose}>
+            <ListItemIcon>
+              <AdminPanelSettingsIcon fontSize="small" />
+            </ListItemIcon>
+            <Link to={'/admin'}>Admin</Link>
+          </MenuItem>
+        ) : (
+          <MenuItem onClick={handleClose}>
+            <ListItemIcon>
+              <ReceiptIcon fontSize="small" />
+            </ListItemIcon>
+            <Link to={'/my-orders'}>My order</Link>
+          </MenuItem>
+        )}
+
         <MenuItem onClick={hanleLogout}>
           <ListItemIcon>
             <Logout fontSize="small" />

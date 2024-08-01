@@ -15,7 +15,7 @@ import MyButton from './buttons/MyButton';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useSnackbar } from 'src/contexts/Snackbar';
 import { Link, useNavigate } from 'react-router-dom';
-import { useCart } from 'src/contexts/StateCart';
+import { useStateCart } from 'src/contexts/StateCart';
 const style = {
   position: 'absolute' as 'absolute',
   top: '50%',
@@ -59,7 +59,7 @@ const SummaryOrder = () => {
 
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [carts, setCarts] = useState<Cart | undefined>();
-  const { setCart } = useCart();
+  const { setCart } = useStateCart();
 
   const getAddress = useCallback(async () => {
     try {

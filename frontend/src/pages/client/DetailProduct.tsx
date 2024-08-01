@@ -19,11 +19,11 @@ import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import { useLinearLoading } from 'src/contexts/Progress';
 import axiosInstance from 'src/config/axiosConfig';
-import { useCart } from 'src/contexts/StateCart';
+import { useStateCart } from 'src/contexts/StateCart';
 
 const DetailProduct = () => {
   const navigate = useNavigate();
-  const { cart, setCart } = useCart();
+  const { cart, setCart } = useStateCart();
   const { id } = useParams();
   const { showSnackbar } = useSnackbar();
   const { showLoading, hideLoading } = useLinearLoading();

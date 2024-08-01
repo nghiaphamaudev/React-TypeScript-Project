@@ -25,7 +25,7 @@ const Login = () => {
                 align="center"
                 sx={{ fontSize: '20px' }}
               >
-                Create your account
+                Sign in your account
               </Typography>
               <form
                 className="space-y-4 md:space-y-6"

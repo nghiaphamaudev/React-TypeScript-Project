@@ -156,6 +156,16 @@ exports.updateStatusAddress = catchAsync(async (req, res, next) => {
 exports.addFavoriteProduct = catchAsync(async (req, res, next) => {
   const currentUser = req.user;
   const idFavoriteProduct = req.params.id;
+  const currentArrayFavoriteProduct = currentUser.favoriteProduct;
+
+  const isExsitedIdFavoriteProduct = currentArrayFavoriteProduct.find(
+    (el) => el.product == idFavoriteProduct
+  );
+  if (isExsitedIdFavoriteProduct)
+    return res.status(200).json({
+      status: 'success',
+    });
+
   const favoriteProduct = await User.findByIdAndUpdate(
     currentUser._id,
     { $push: { favoriteProduct: { product: idFavoriteProduct } } },

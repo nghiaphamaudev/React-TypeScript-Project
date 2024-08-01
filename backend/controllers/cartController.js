@@ -107,3 +107,47 @@ exports.deleteProductCart = catchAsync(async (req, res, next) => {
     data: cart,
   });
 });
+
+exports.updateQuantityCart = catchAsync(async (req, res, next) => {
+  const currentCart = req.currentCart;
+  const { mode, id } = req.body;
+
+  // Tìm sản phẩm trong giỏ hàng
+  const itemIndex = currentCart.orderItems.find(
+    (item) => item.product.toString() == id
+  );
+  if (itemIndex === -1) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Product not found in the cart',
+    });
+  }
+
+  // Cập nhật số lượng dựa trên mode
+  if (mode === 'plus') {
+    itemIndex.quantity += 1;
+  } else if (mode === 'minus' && itemIndex.quantity > 1) {
+    itemIndex.quantity -= 1;
+  } else {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Invalid mode or quantity cannot be less than 1',
+    });
+  }
+
+  // Lưu giỏ hàng sau khi cập nhật
+  await currentCart.save();
+  await currentCart.populate({
+    path: 'orderItems',
+    populate: {
+      path: 'product',
+      model: Laptop,
+      select: '_id name monitor coverImg version ratingsAverage price ',
+    },
+  });
+
+  return res.status(200).json({
+    status: 'success',
+    data: currentCart,
+  });
+});

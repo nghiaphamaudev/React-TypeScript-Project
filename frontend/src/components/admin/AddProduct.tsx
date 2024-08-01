@@ -1,5 +1,5 @@
 import { Box, CssBaseline, ThemeProvider, Typography } from '@mui/material';
-import TextField from '@mui/material/TextField';
+
 import themeTextField from 'src/config/themeInput';
 import * as React from 'react';
 import InputLabel from '@mui/material/InputLabel';
@@ -17,6 +17,7 @@ import { useSnackbar } from 'src/contexts/Snackbar';
 import { useLinearLoading } from 'src/contexts/Progress';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Products } from 'src/types/products';
+import TextField from '@mui/material/TextField';
 
 const Input = styled('input')({
   display: 'none',
@@ -118,6 +119,7 @@ const AddProduct: React.FC<AddProductProps> = ({ initialData, mode }) => {
         });
         showSnackbar('success', 'Add product is successfully!');
       } else {
+        console.log(formData);
         await axiosInstance.patch(`/laptops/${initialData?._id}`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
@@ -240,6 +242,7 @@ const AddProduct: React.FC<AddProductProps> = ({ initialData, mode }) => {
                     helperText={errors?.price?.message}
                     placeholder="Type price product"
                     fullWidth
+                    InputProps={{ inputProps: { step: 0.1 } }}
                   />
                 </div>
                 <div>
@@ -260,6 +263,7 @@ const AddProduct: React.FC<AddProductProps> = ({ initialData, mode }) => {
                     helperText={errors?.priceDiscount?.message}
                     placeholder="Type price discount product"
                     fullWidth
+                    InputProps={{ inputProps: { step: 0.1 } }}
                   />
                 </div>
                 <div>

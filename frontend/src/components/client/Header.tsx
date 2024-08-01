@@ -10,7 +10,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import AccountMenu from '../admin/avatar/Avatar';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import { useCart } from 'src/contexts/StateCart';
+import { useStateCart } from 'src/contexts/StateCart';
 import { useUser } from 'src/contexts/AuthContext';
 import axiosInstance from 'src/config/axiosConfig';
 
@@ -25,7 +25,7 @@ const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
 
 const Header = () => {
   const [activate, setActivate] = useState('home');
-  const { cart, setCart } = useCart();
+  const { cart, setCart } = useStateCart();
 
   const { user, setUser } = useUser();
 
@@ -40,7 +40,8 @@ const Header = () => {
   const getUser = async () => {
     const id = JSON.parse(localStorage.getItem('user') ?? 'null') || null;
     try {
-      const data = await axiosInstance.get(`/users/${id}`);
+      const data = await axiosInstance.get(`users/get-me/${id}`);
+
       setUser(data.data.data);
     } catch (error: any) {
       console.log(error);
@@ -191,7 +192,11 @@ const Header = () => {
 
               <div className="relative ml-3">
                 {user ? (
-                  <AccountMenu username={user.username} photo={user.photo} />
+                  <AccountMenu
+                    username={user.username}
+                    photo={user.photo}
+                    role={user.role}
+                  />
                 ) : (
                   <Link to={'/login'}>
                     <IconButton aria-label="cart">
