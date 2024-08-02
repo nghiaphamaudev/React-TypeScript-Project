@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const compression = require('compression');
 
 const laptopRouter = require('./routes/laptopRoutes');
 const categoryRouter = require('./routes/categoryRoutes');
@@ -22,6 +23,7 @@ app.use(
   })
 );
 app.use(cookieParser());
+app.use(compression());
 
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 app.use('/api/v1/laptops', laptopRouter);
