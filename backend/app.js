@@ -4,11 +4,11 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
 
-const laptopRouter = require('./routes/laptopRoutes');
-const categoryRouter = require('./routes/categoryRoutes');
-const userRouter = require('./routes/userRoutes');
-const cartRouter = require('./routes/cartRoutes');
-const orderRouter = require('./routes/orderRoutes');
+const laptopRouter = require('./src/routes/laptopRoutes');
+const categoryRouter = require('./src/routes/categoryRoutes');
+const userRouter = require('./src/routes/userRoutes');
+const cartRouter = require('./src/routes/cartRoutes');
+const orderRouter = require('./src/routes/orderRoutes');
 const globalHandleError = require('./controllers/errorController');
 const AppError = require('./utils/appError');
 
